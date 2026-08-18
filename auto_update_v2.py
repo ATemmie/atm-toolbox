@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 ATM 工具箱 cron 总入口 v2
-- 每 30 分钟: 用 Edge CDP 抓 workspace/go 用量 → 生成摘要 → push
+- 每 3 分钟: 用 Edge CDP 抓 workspace/go 用量 → 生成摘要 → push
 - 每天 10 点: 抓官方价格 → push（有变动才通知）
 用法: python auto_update_v2.py usage|price|all [--notify]
+成功时静默（cron no_agent 模式下空 stdout = 不推送，避免刷屏）；
+失败时输出错误 → 会作为告警推送给用户。
 """
 import subprocess, sys, os, time
 
@@ -85,24 +87,23 @@ def main():
             for attempt in range(1, 4):
                 rc, out, err = run('cdp_go_page.py', [])
                 if rc == 0:
-                    print(f'cdp 抓取成功 (第{attempt}次)')
                     break
-                print(f'cdp 抓取失败 rc={rc} (第{attempt}/3): {err[:200]}')
                 time.sleep(8)
             if rc != 0:
-                print('❗ cdp 连续 3 次失败，本次跳过 push（数据保持上次）')
+                # 失败：输出错误 → cron no_agent 会作为告警推送
+                print(f'❌ 用量抓取失败（3 次重试均失败）: {err[:300]}')
             else:
                 rc2, out2, err2 = run('make_ws_summary.py', [])
                 push_err = push(f'usage auto {time.strftime("%Y%m%d_%H%M%S")}')
                 if push_err:
-                    print(f'push: {push_err}')
-                print(f'usage: rc={rc}/{rc2}')
+                    print(f'⚠️ 用量数据已抓取但推送失败: {push_err}')
         else:
             print('⚠️ Edge CDP 仍不可用 — 可能需要手动登录 opencode 一次')
 
     if mode in ('price', 'all'):
         rc, out, err = run('update_go.py', ['--push', '--quiet'], timeout=300)
-        print(f'price: rc={rc}')
+        if rc != 0:
+            print(f'⚠️ 价格更新失败 rc={rc}: {err[:200]}')
 
     if notify:
         # 只输出有意义的变动（价格变动时 update_go.py 会输出）
