@@ -1,0 +1,9 @@
+# 本地构建产物/临时文件
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# 预留给后续
+# node_modules/
+# dist/

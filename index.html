@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ATM 工具箱</title>
+<meta name="description" content="ATemmie 的个人手机工具箱 - OpenCode Zen Go 套餐监控">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATM 工具箱">
+<meta name="theme-color" content="#0b1020">
+<style>
+:root {
+  --bg0: #0b1020;
+  --bg1: #111a33;
+  --card: rgba(255,255,255,0.055);
+  --card-border: rgba(255,255,255,0.10);
+  --txt: #e8ecf7;
+  --txt-dim: #9aa5c3;
+  --indigo: #6c5ce7;
+  --violet: #a55eea;
+  --cyan: #45d8e0;
+  --green: #4cd97b;
+  --red: #ff6b81;
+  --amber: #ffc048;
+  --radius: 18px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--bg0); color: var(--txt); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; min-height: 100%; }
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(108,92,231,0.28), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(69,216,224,0.16), transparent 55%),
+    radial-gradient(800px 600px at 50% 110%, rgba(165,94,234,0.18), transparent 60%),
+    var(--bg0);
+  padding: env(safe-area-inset-top) 14px calc(env(safe-area-inset-bottom) + 24px);
+}
+.app {
+  max-width: 680px; margin: 0 auto;
+}
+header {
+  display: flex; align-items: center; gap: 12px; padding: 22px 4px 14px;
+}
+header .logo {
+  width: 46px; height: 46px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--indigo), var(--violet) 55%, var(--cyan));
+  display: grid; place-items: center; font-size: 24px;
+  box-shadow: 0 6px 24px rgba(108,92,231,0.45);
+}
+header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+header .sub { font-size: 11.5px; color: var(--txt-dim); margin-top: 2px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; padding: 3px 9px; border-radius: 999px;
+  background: rgba(69,216,224,0.12); color: var(--cyan);
+  border: 1px solid rgba(69,216,224,0.3);
+}
+.glass {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+.card { padding: 18px; margin-bottom: 14px; }
+.card h2 {
+  font-size: 15px; font-weight: 700; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card .desc { font-size: 12px; color: var(--txt-dim); margin-bottom: 14px; line-height: 1.6; }
+
+/* 套餐概览 */
+.plan-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.plan-item {
+  background: rgba(255,255,255,0.045); border: 1px solid var(--card-border);
+  border-radius: 14px; padding: 12px; text-align: center;
+}
+.plan-item .k { font-size: 11px; color: var(--txt-dim); }
+.plan-item .v { font-size: 19px; font-weight: 800; margin-top: 4px; }
+.plan-item .v.grad { background: linear-gradient(90deg, var(--indigo), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.plan-item .s { font-size: 10.5px; color: var(--txt-dim); margin-top: 2px; }
+
+/* 限额条 */
+.limit-row { display: flex; align-items: center; gap: 12px; padding: 8px 2px; }
+.limit-row .lab { width: 86px; font-size: 12px; color: var(--txt-dim); flex-shrink: 0; }
+.limit-bar { flex: 1; height: 8px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.limit-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--indigo), var(--cyan)); }
+.limit-row .val { width: 64px; text-align: right; font-size: 12.5px; font-weight: 700; }
+
+/* 表格 */
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.toolbar input[type=search] {
+  flex: 1; min-width: 140px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+  color: var(--txt); border-radius: 10px; padding: 8px 12px; font-size: 13px; outline: none;
+}
+.toolbar input[type=search]:focus { border-color: rgba(108,92,231,0.6); }
+.toolbar button {
+  background: rgba(108,92,231,0.18); border: 1px solid rgba(108,92,231,0.4);
+  color: var(--txt); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; cursor: pointer;
+}
+.toolbar button:hover { background: rgba(108,92,231,0.3); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead th {
+  text-align: left; color: var(--txt-dim); font-weight: 600; font-size: 11.5px;
+  padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer; white-space: nowrap; user-select: none;
+}
+thead th .arr { opacity: 0.5; font-size: 10px; }
+tbody td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:active { background: rgba(255,255,255,0.03); }
+.mname { font-weight: 700; font-size: 13px; }
+.mtag { font-size: 10px; color: var(--txt-dim); margin-top: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.up { color: var(--green); } .down { color: var(--red); } .flat { color: var(--txt-dim); }
+.delta { font-size: 10.5px; margin-left: 3px; }
+.free { color: var(--cyan); font-weight: 700; }
+.quota-tag {
+  display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px;
+  background: rgba(255,192,72,0.12); color: var(--amber); border: 1px solid rgba(255,192,72,0.25);
+}
+.quota-tag.hi { background: rgba(76,217,123,0.12); color: var(--green); border-color: rgba(76,217,123,0.25); }
+
+.footer { text-align: center; padding: 14px 0 6px; font-size: 11px; color: var(--txt-dim); line-height: 1.8; }
+.footer a { color: var(--cyan); text-decoration: none; }
+.note {
+  font-size: 11.5px; color: var(--txt-dim); line-height: 1.7; margin-top: 12px;
+  padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.12);
+}
+.tip {
+  display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--amber);
+  background: rgba(255,192,72,0.08); border: 1px solid rgba(255,192,72,0.2);
+  border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; line-height: 1.6;
+}
+.fav-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.fav {
+  flex: 1; min-width: 130px; text-align: center; padding: 12px 10px; border-radius: 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+}
+.fav .fn { font-size: 13px; font-weight: 700; }
+.fav .fv { font-size: 11px; color: var(--txt-dim); margin-top: 3px; }
+.fav b { color: var(--cyan); }
+.updated { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 11.5px; color: var(--txt-dim); }
+.spark { font-size: 10.5px; color: var(--txt-dim); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">🧰</div>
+    <div>
+      <h1>ATM 工具箱 <span class="badge">PWA</span></h1>
+      <div class="sub">ATemmie 的随身工具箱 · 第一版：Zen Go 监控</div>
+    </div>
+  </header>
+
+  <div class="card glass">
+    <h2>⚡ OpenCode Go 套餐监控</h2>
+    <div class="desc">你正在用的低配套餐。实时跟踪官方定价与使用限额，涨价第一时间看到。</div>
+
+    <div class="plan-grid">
+      <div class="plan-item">
+        <div class="k">首月</div>
+        <div class="v grad" id="p-first">$5</div>
+        <div class="s">体验价</div>
+      </div>
+      <div class="plan-item">
+        <div class="k">之后每月</div>
+        <div class="v" id="p-month">$10</div>
+        <div class="s">随时可取消</div>
+      </div>
+      <div class="plan-item">
+        <div class="k">目标额度</div>
+        <div class="v" id="p-target">6×</div>
+        <div class="s">订阅价格 6 倍</div>
+      </div>
+    </div>
+
+    <div class="tip">⚠️ 官方规则：额度以美元价值计算。达到限制后可继续用免费模型，或在控制台开启「使用余额」回退到 Zen 余额（注意：开启后当月可能超 $20）。</div>
+
+    <div class="limit-row"><div class="lab">每 5 小时</div><div class="limit-bar"><i style="width:20%"></i></div><div class="val" id="l-5h">$12</div></div>
+    <div class="limit-row"><div class="lab">每周</div><div class="limit-bar"><i style="width:50%"></i></div><div class="val" id="l-week">$30</div></div>
+    <div class="limit-row"><div class="lab">每月</div><div class="limit-bar"><i style="width:100%"></i></div><div class="val" id="l-month">$60</div></div>
+  </div>
+
+  <div class="card glass">
+    <h2>📊 模型限额与价格</h2>
+    <div class="updated">
+      <span id="update-time">数据加载中…</span>
+      <span class="spark">官方文档直抓 · 自动更新</span>
+    </div>
+
+    <div class="fav-row" id="fav-row">
+      <div class="fav"><div class="fn">DeepSeek V4 Flash</div><div class="fv">5h <b>7,600</b> 次 · $0.22/M in</div></div>
+      <div class="fav"><div class="fn">MiMo-V2.5</div><div class="fv">5h <b>30,100</b> 次 · $0.14/M in</div></div>
+      <div class="fav"><div class="fn">GPT 5.6 Luna</div><div class="fv">5h <b>2,050</b> 次 · $0.20/M in</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="🔍 搜模型… (输入/模型名)">
+    </div>
+
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="name">模型</th>
+            <th data-sort="req5h" class="num">5h 请求数</th>
+            <th data-sort="reqM" class="num">月请求数</th>
+            <th data-sort="in" class="num">输入价/M</th>
+            <th data-sort="out" class="num">输出价/M</th>
+            <th data-sort="quota" class="num">额度</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      📌 <b>输入/输出价</b>为每 1M tokens 美元价（分档模型按 ≤ 阈值档显示）<br>
+      📌 <b>5h/月请求数</b>为官方按典型用量估算，实际取决于你的 token 消耗<br>
+      📌 DeepSeek 有 Peak/Off-Peak 价差（Peak 时段 01:00-04:00 & 06:00-10:00 UTC）<br>
+      📌 数据源：<a href="https://opencode.ai/docs/zh-cn/go/" target="_blank">opencode.ai 官方文档</a> · 仅作参考，以官网实时为准
+    </div>
+  </div>
+
+  <div class="footer">
+    ATM 工具箱 v1.0 · 数据自动抓取更新<br>
+    下一个功能想法？跟 Hermes 说 → <a href="https://github.com/ATemmie" target="_blank">github.com/ATemmie</a>
+  </div>
+</div>
+
+<script>
+const fmt = (n) => n == null ? '-' : Number(n).toLocaleString('en-US');
+const money = (v) => v == null ? '-' : '$' + (Number(v) % 1 === 0 ? Number(v) : Number(v).toFixed(2));
+
+let DATA = null;
+let sortKey = 'req5h';
+let sortDir = -1;
+
+function tierFirst(model) {
+  const t = (model.pricing && model.pricing.tiers) || {};
+  const keys = Object.keys(t);
+  if (!keys.length) return {};
+  return t[keys[0]] || {};
+}
+
+function render() {
+  if (!DATA) return;
+  const q = (document.getElementById('q').value || '').trim().toLowerCase();
+  let rows = DATA.models.filter(m => m.name.toLowerCase().includes(q));
+
+  rows.sort((a, b) => {
+    const get = (m) => {
+      const p = tierFirst(m);
+      const r = m.requests || {};
+      switch (sortKey) {
+        case 'name': return m.name.toLowerCase();
+        case 'req5h': return r.per_5h || 0;
+        case 'reqM': return r.per_month || 0;
+        case 'in': return p.input ?? Infinity;
+        case 'out': return p.output ?? Infinity;
+        case 'quota': return p.quota ?? Infinity;
+        default: return 0;
+      }
+    };
+    const av = get(a), bv = get(b);
+    if (typeof av === 'string') return av.localeCompare(bv) * sortDir;
+    return (av - bv) * sortDir;
+  });
+
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = rows.map(m => {
+    const p = tierFirst(m);
+    const tiers = (m.pricing && m.pricing.tiers) || {};
+    const tierCount = Object.keys(tiers).length;
+    const tierLab = tierCount > 1 ? ` (${Object.keys(tiers)[0]})` : '';
+    const r = m.requests || {};
+    const quota = p.quota;
+    const quotaClass = quota >= 60 ? 'hi' : '';
+    const inFree = p.input === null ? true : false;
+    return `<tr>
+      <td><div class="mname">${m.name}</div><div class="mtag">${m.endpoint && m.endpoint.model_id ? m.endpoint.model_id : ''}${tierCount > 1 ? ' · 多档' : ''}</div></td>
+      <td class="num">${fmt(r.per_5h)}</td>
+      <td class="num">${fmt(r.per_month)}</td>
+      <td class="num">${inFree ? '<span class="free">Free</span>' : money(p.input)}${tierCount > 1 ? `<span class="delta flat">${tierLab}</span>` : ''}</td>
+      <td class="num">${money(p.output)}</td>
+      <td class="num">${quota != null ? `<span class="quota-tag ${quotaClass}">$${quota}/月</span>` : '-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.querySelectorAll('thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const k = th.dataset.sort;
+    if (sortKey === k) sortDir = -sortDir;
+    else { sortKey = k; sortDir = (k === 'name') ? 1 : -1; }
+    render();
+  });
+});
+
+document.getElementById('q').addEventListener('input', render);
+
+fetch('./data/go_data.json').then(r => r.json()).then(d => {
+  DATA = d;
+  const pl = d.plan;
+  document.getElementById('p-first').textContent = '$' + pl.price_first_month_usd;
+  document.getElementById('p-month').textContent = '$' + pl.price_monthly_usd;
+  document.getElementById('p-target').textContent = '6×';
+  document.getElementById('l-5h').textContent = '$' + pl.limits_usd.per_5h;
+  document.getElementById('l-week').textContent = '$' + pl.limits_usd.per_week;
+  document.getElementById('l-month').textContent = '$' + pl.limits_usd.per_month;
+  document.getElementById('update-time').textContent = '🕐 数据更新：' + (d.fetched_at || '未知');
+  render();
+}).catch(e => {
+  document.getElementById('update-time').textContent = '⚠️ 数据加载失败（' + e.message + '）';
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
