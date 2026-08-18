@@ -1,0 +1,4 @@
+{
+  "ts": "20260819010129",
+  "text": "2026-08-19 01:01:28\n💬 测试语音桥：今天澳门天气怎么样？\n\n🤖 ⚠️ Hermes 处理出错: usage: hermes [-h] [--version] [-z PROMPT] [-m MODEL] [--provider PROVIDER]\n              [-t TOOLSETS] [--resume SESSION] [--continue [SESSION_NAME]]\n              [--worktree] [--accept-hooks] [--sk"
+}
