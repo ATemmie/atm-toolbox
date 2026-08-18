@@ -349,28 +349,39 @@ fetch('./data/go_data.json').then(r => r.json()).then(d => {
   document.getElementById('update-time').textContent = '⚠️ 数据加载失败（' + e.message + '）';
 });
 
-// 用量数据
+// 用量数据（workspace 真实占比）
 fetch('./data/go_usage_summary.json').then(r => r.json()).then(u => {
   const fmtUsd = (v) => v == null ? '-' : '$' + (Number(v) % 1 === 0 ? Number(v) : Number(v).toFixed(4));
-  document.getElementById('u-req').textContent = (u.totalRequests ?? 0).toLocaleString();
-  document.getElementById('u-in').textContent = (u.totalInputTokens ?? 0).toLocaleString();
-  document.getElementById('u-cost').textContent = fmtUsd(u.totalCostUsd);
+  const fmtNum = (v) => v == null ? '-' : Number(v).toLocaleString();
+  document.getElementById('u-req').textContent = fmtNum(u.recent_sessions);
+  document.getElementById('u-in').textContent = fmtNum((u.by_model && u.by_model['deepseek-v4-flash'] && u.by_model['deepseek-v4-flash'].sessions) || u.recent_sessions);
+  document.getElementById('u-cost').textContent = fmtUsd(u.recent_total_cost_usd);
   document.getElementById('usage-time').textContent = '🕐 用量更新：' + (u.fetched_at || '未知');
+
+  // 更新标签
   const badge = document.getElementById('usage-badge');
-  if ((u.totalCostUsd ?? 0) > 0) {
-    badge.textContent = '🔴 有消耗';
-  } else {
-    badge.textContent = '🟢 零消耗';
+  if ((u.monthly_pct ?? 0) >= 80) badge.textContent = '🔴 月额度快用完！';
+  else if ((u.weekly_pct ?? 0) >= 80) badge.textContent = '🟠 周额度用大半';
+  else if ((u.monthly_pct ?? 0) > 0) badge.textContent = '🟢 使用中';
+  else badge.textContent = '🟢 未使用';
+
+  // 占比卡（复用 plan-grid 区域显示滚动/每周/每月）
+  const grid = document.querySelector('.plan-grid');
+  if (u.rolling_pct != null || u.weekly_pct != null || u.monthly_pct != null) {
+    let extra = '';
+    if (u.rolling_pct != null) extra += `<div class="plan-item"><div class="k">🔄 滚动用量</div><div class="v grad">${u.rolling_pct}%</div><div class="s">${u.rolling_reset || ''}后重置</div></div>`;
+    if (u.weekly_pct != null) extra += `<div class="plan-item"><div class="k">📅 每周用量</div><div class="v grad">${u.weekly_pct}%</div><div class="s">${u.weekly_reset || ''}后重置</div></div>`;
+    if (u.monthly_pct != null) extra += `<div class="plan-item"><div class="k">📆 每月用量</div><div class="v grad">${u.monthly_pct}%</div><div class="s">${u.monthly_reset || ''}后重置</div></div>`;
+    grid.insertAdjacentHTML('beforeend', extra);
   }
+
   // 模型明细
-  const d7 = u.detail_7d || {};
-  const byModel = (u.detail_30d && u.detail_30d.by_model) || {};
-  const names = Object.keys(byModel);
+  const names = Object.keys(u.by_model || {});
   if (names.length) {
     const note = document.getElementById('usage-note');
     note.style.display = 'block';
-    note.innerHTML = '📌 <b>30 天模型明细：</b>' + names.map(n =>
-      `${n} (${byModel[n].requests} 次, $${byModel[n].cost_usd.toFixed(4)})`).join('、');
+    note.innerHTML = '📌 <b>模型消耗：</b>' + names.map(n =>
+      `${n} (${u.by_model[n].sessions} 次, $${u.by_model[n].cost_usd.toFixed(4)})`).join('、');
   }
 }).catch(e => {
   document.getElementById('usage-time').textContent = '⚠️ 用量数据未连接（' + e.message + '）';

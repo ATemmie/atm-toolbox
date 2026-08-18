@@ -12,3 +12,7 @@ probe_*.py
 login_*.py
 test_key_usage.py
 *.png
+data/ws_usage.json
+data/ws_go_page.json
+*.jpg
+ocr_shot.py

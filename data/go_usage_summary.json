@@ -1,21 +1,18 @@
 {
-  "fetched_at": "2026-08-18 18:06:28",
-  "totalRequests": 0,
-  "totalInputTokens": 0,
-  "totalOutputTokens": 0,
-  "totalCacheReadTokens": 0,
-  "totalCostUsd": 0.0,
-  "detail_30d": {
-    "requests": 0,
-    "totalCostUsd": 0,
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "by_model": {}
-  },
-  "detail_7d": {
-    "requests": 0,
-    "totalCostUsd": 0,
-    "inputTokens": 0,
-    "outputTokens": 0
+  "fetched_at": "2026-08-18 18:30:27",
+  "source": "workspace console",
+  "rolling_pct": 26.0,
+  "rolling_reset": "32 分钟",
+  "weekly_pct": 70.0,
+  "weekly_reset": "5 天 13 小时",
+  "monthly_pct": 39.0,
+  "monthly_reset": "28 天 20 小时",
+  "recent_sessions": 50,
+  "recent_total_cost_usd": 0.2726,
+  "by_model": {
+    "deepseek-v4-flash": {
+      "sessions": 50,
+      "cost_usd": 0.2726
+    }
   }
 }
