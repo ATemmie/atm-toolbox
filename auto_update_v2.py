@@ -35,13 +35,50 @@ def main():
     changes = []
 
     if mode in ('usage', 'all'):
-        # 1. 检查 Edge CDP 是否存活，不存活就跳过并提示（需用户登录态）
+        # 1. 检查 Edge CDP 是否存活，不存活则尝试拉起（复制 profile + 调试端口）
         try:
             import urllib.request
             r = urllib.request.urlopen('http://127.0.0.1:9223/json', timeout=5)
             cdp_alive = r.status == 200
         except Exception:
             cdp_alive = False
+        if not cdp_alive:
+            print('Edge CDP 未运行，尝试启动…')
+            import subprocess as sp
+            edge = r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+            if not os.path.exists(edge):
+                edge = r'C:\Program Files\Microsoft\Edge\Application\msedge.exe'
+            profile = r'C:\Users\Administrator\AppData\Local\Microsoft\Edge\User Data Copy'
+            if not os.path.exists(profile):
+                # 从默认 profile 复制一份（保留登录态）
+                src = r'C:\Users\Administrator\AppData\Local\Microsoft\Edge\User Data\Default'
+                os.makedirs(profile + r'\Default', exist_ok=True)
+                for item in os.listdir(src):
+                    s = os.path.join(src, item)
+                    d = os.path.join(profile + r'\Default', item)
+                    try:
+                        if os.path.isdir(s):
+                            import shutil
+                            if not os.path.exists(d):
+                                shutil.copytree(s, d)
+                        else:
+                            if not os.path.exists(d):
+                                shutil.copy2(s, d)
+                    except Exception:
+                        pass
+            sp.Popen([edge, '--remote-debugging-port=9223',
+                      f'--user-data-dir={profile}',
+                      '--no-first-run', '--no-default-browser-check',
+                      'https://opencode.ai/workspace/wrk_01KYD365FD37BNQMKJGEG16M1C/go'],
+                     creationflags=0x08000000)  # CREATE_NO_WINDOW
+            time.sleep(12)
+            try:
+                r = urllib.request.urlopen('http://127.0.0.1:9223/json', timeout=5)
+                cdp_alive = r.status == 200
+                if cdp_alive:
+                    print('CDP 启动成功')
+            except Exception:
+                cdp_alive = False
         if cdp_alive:
             rc, out, err = run('cdp_go_page.py', [])
             rc2, out2, err2 = run('make_ws_summary.py', [])
@@ -50,7 +87,7 @@ def main():
                 print(f'push: {push_err}')
             print(f'usage: rc={rc}/{rc2}')
         else:
-            print('⚠️ Edge CDP 未运行 (9223) — 跳过用量抓取。启动: msedge --remote-debugging-port=9223 --user-data-dir=...')
+            print('⚠️ Edge CDP 仍不可用 — 可能需要手动登录 opencode 一次')
 
     if mode in ('price', 'all'):
         rc, out, err = run('update_go.py', ['--push', '--quiet'], timeout=300)
