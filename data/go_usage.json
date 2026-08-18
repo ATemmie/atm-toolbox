@@ -1,0 +1,15 @@
+{
+  "fetched_at": "2026-08-18 18:06:28",
+  "org_id": "org_01M0A41EXB0YVXZ5A05Q7P1SGN",
+  "summary": {
+    "totalRequests": "0",
+    "totalInputTokens": "0",
+    "totalOutputTokens": "0",
+    "totalCacheReadTokens": "0",
+    "totalCacheWrite5mTokens": "0",
+    "totalCacheWrite1hTokens": "0",
+    "totalCostMicroCents": "0"
+  },
+  "export_30d": "id,user_email,service_account_name,app,provider,model,input_tokens,output_tokens,reasoning_tokens,cache_read_tokens,cache_write_5m_tokens,cache_write_1h_tokens,reasoning_mode,reasoning_effort,reasoning_budget_tokens,reasoning_source,billing_source,cost_micro_cents,created_at\r\n",
+  "export_7d": "id,user_email,service_account_name,app,provider,model,input_tokens,output_tokens,reasoning_tokens,cache_read_tokens,cache_write_5m_tokens,cache_write_1h_tokens,reasoning_mode,reasoning_effort,reasoning_budget_tokens,reasoning_source,billing_source,cost_micro_cents,created_at\r\n"
+}

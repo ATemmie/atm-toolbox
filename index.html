@@ -189,6 +189,34 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
   </div>
 
   <div class="card glass">
+    <h2>📈 我的套餐用量 <span class="badge" id="usage-badge">连接中…</span></h2>
+    <div class="desc">你的 Go 套餐实时消耗（自动抓取官方控制台数据）</div>
+
+    <div class="plan-grid">
+      <div class="plan-item">
+        <div class="k">总请求</div>
+        <div class="v" id="u-req">-</div>
+        <div class="s">次请求</div>
+      </div>
+      <div class="plan-item">
+        <div class="k">输入 Tokens</div>
+        <div class="v" id="u-in">-</div>
+        <div class="s">7 天累计</div>
+      </div>
+      <div class="plan-item">
+        <div class="k">总花费</div>
+        <div class="v grad" id="u-cost">-</div>
+        <div class="s">美元</div>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top:12px">
+      <span class="spark" id="usage-time">数据加载中…</span>
+    </div>
+    <div class="note" id="usage-note" style="display:none"></div>
+  </div>
+
+  <div class="card glass">
     <h2>📊 模型限额与价格</h2>
     <div class="updated">
       <span id="update-time">数据加载中…</span>
@@ -319,6 +347,33 @@ fetch('./data/go_data.json').then(r => r.json()).then(d => {
   render();
 }).catch(e => {
   document.getElementById('update-time').textContent = '⚠️ 数据加载失败（' + e.message + '）';
+});
+
+// 用量数据
+fetch('./data/go_usage_summary.json').then(r => r.json()).then(u => {
+  const fmtUsd = (v) => v == null ? '-' : '$' + (Number(v) % 1 === 0 ? Number(v) : Number(v).toFixed(4));
+  document.getElementById('u-req').textContent = (u.totalRequests ?? 0).toLocaleString();
+  document.getElementById('u-in').textContent = (u.totalInputTokens ?? 0).toLocaleString();
+  document.getElementById('u-cost').textContent = fmtUsd(u.totalCostUsd);
+  document.getElementById('usage-time').textContent = '🕐 用量更新：' + (u.fetched_at || '未知');
+  const badge = document.getElementById('usage-badge');
+  if ((u.totalCostUsd ?? 0) > 0) {
+    badge.textContent = '🔴 有消耗';
+  } else {
+    badge.textContent = '🟢 零消耗';
+  }
+  // 模型明细
+  const d7 = u.detail_7d || {};
+  const byModel = (u.detail_30d && u.detail_30d.by_model) || {};
+  const names = Object.keys(byModel);
+  if (names.length) {
+    const note = document.getElementById('usage-note');
+    note.style.display = 'block';
+    note.innerHTML = '📌 <b>30 天模型明细：</b>' + names.map(n =>
+      `${n} (${byModel[n].requests} 次, $${byModel[n].cost_usd.toFixed(4)})`).join('、');
+  }
+}).catch(e => {
+  document.getElementById('usage-time').textContent = '⚠️ 用量数据未连接（' + e.message + '）';
 });
 
 if ('serviceWorker' in navigator) {

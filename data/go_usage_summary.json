@@ -1,0 +1,21 @@
+{
+  "fetched_at": "2026-08-18 18:06:28",
+  "totalRequests": 0,
+  "totalInputTokens": 0,
+  "totalOutputTokens": 0,
+  "totalCacheReadTokens": 0,
+  "totalCostUsd": 0.0,
+  "detail_30d": {
+    "requests": 0,
+    "totalCostUsd": 0,
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "by_model": {}
+  },
+  "detail_7d": {
+    "requests": 0,
+    "totalCostUsd": 0,
+    "inputTokens": 0,
+    "outputTokens": 0
+  }
+}
