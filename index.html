@@ -155,110 +155,99 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
     <div class="logo">🧰</div>
     <div>
       <h1>ATM 工具箱 <span class="badge">PWA</span></h1>
-      <div class="sub">ATemmie 的随身工具箱 · 第一版：Zen Go 监控</div>
+      <div class="sub">ATemmie 的随身工具箱</div>
     </div>
   </header>
 
-  <div class="card glass">
-    <h2>⚡ OpenCode Go 套餐监控</h2>
-    <div class="desc">你正在用的低配套餐。实时跟踪官方定价与使用限额，涨价第一时间看到。</div>
+  <!-- 分类导航 -->
+  <nav class="cat-nav glass">
+    <button class="cat-btn active" data-cat="home">🏠 总览</button>
+    <button class="cat-btn" data-cat="usage">📈 用量</button>
+    <button class="cat-btn" data-cat="pricing">💰 价格</button>
+    <button class="cat-btn" data-cat="tools">🧩 工具</button>
+  </nav>
 
-    <div class="plan-grid">
-      <div class="plan-item">
-        <div class="k">首月</div>
-        <div class="v grad" id="p-first">$5</div>
-        <div class="s">体验价</div>
+  <!-- 板块: 总览 -->
+  <section class="cat-sec active" id="sec-home">
+    <div class="card glass">
+      <h2>🚀 一键部署</h2>
+      <div class="desc">手动触发电脑端刷新数据并部署上线（跟所说的话让 Hermes 干活等价，只是用按钮代替打字）</div>
+      <button class="deploy-btn" id="btn-deploy" onclick="triggerDeploy()">
+        <span class="deploy-ico">🚀</span> 一键部署 / 立即更新
+      </button>
+      <div class="deploy-status" id="deploy-status">电脑离线时按钮无效 · 数据每 30 分钟自动更新</div>
+    </div>
+    <div class="card glass">
+      <h2>📊 我的套餐用量 <span class="badge" id="usage-badge-home">连接中…</span></h2>
+      <div class="desc">OpenCode Go 套餐实时占比（自动抓取官方控制台）</div>
+      <div class="plan-grid" id="pg-home"></div>
+    </div>
+    <div class="card glass">
+      <h2>🧩 工具合集</h2>
+      <div class="desc">按分类快速直达各个小工具</div>
+      <div class="tool-grid" id="tool-grid-home"></div>
+    </div>
+  </section>
+
+  <!-- 板块: 用量详情 -->
+  <section class="cat-sec" id="sec-usage">
+    <div class="card glass">
+      <h2>📈 用量明细</h2>
+      <div class="desc">滚动/每周/每月消耗占比与重置时间</div>
+      <div class="plan-grid" id="pg-usage"></div>
+      <div class="toolbar" style="margin-top:12px">
+        <span class="spark" id="usage-time">数据加载中…</span>
       </div>
-      <div class="plan-item">
-        <div class="k">之后每月</div>
-        <div class="v" id="p-month">$10</div>
-        <div class="s">随时可取消</div>
-      </div>
-      <div class="plan-item">
-        <div class="k">目标额度</div>
-        <div class="v" id="p-target">6×</div>
-        <div class="s">订阅价格 6 倍</div>
-      </div>
+      <div class="note" id="usage-note" style="display:none"></div>
     </div>
+  </section>
 
-    <div class="tip">⚠️ 官方规则：额度以美元价值计算。达到限制后可继续用免费模型，或在控制台开启「使用余额」回退到 Zen 余额（注意：开启后当月可能超 $20）。</div>
-
-    <div class="limit-row"><div class="lab">每 5 小时</div><div class="limit-bar"><i style="width:20%"></i></div><div class="val" id="l-5h">$12</div></div>
-    <div class="limit-row"><div class="lab">每周</div><div class="limit-bar"><i style="width:50%"></i></div><div class="val" id="l-week">$30</div></div>
-    <div class="limit-row"><div class="lab">每月</div><div class="limit-bar"><i style="width:100%"></i></div><div class="val" id="l-month">$60</div></div>
-  </div>
-
-  <div class="card glass">
-    <h2>📈 我的套餐用量 <span class="badge" id="usage-badge">连接中…</span></h2>
-    <div class="desc">你的 Go 套餐实时消耗（自动抓取官方控制台数据）</div>
-
-    <div class="plan-grid">
-      <div class="plan-item">
-        <div class="k">总请求</div>
-        <div class="v" id="u-req">-</div>
-        <div class="s">次请求</div>
+  <!-- 板块: 价格 -->
+  <section class="cat-sec" id="sec-pricing">
+    <div class="card glass">
+      <h2>📊 模型限额与价格</h2>
+      <div class="updated">
+        <span id="update-time">数据加载中…</span>
+        <span class="spark">官方文档直抓 · 自动更新</span>
       </div>
-      <div class="plan-item">
-        <div class="k">输入 Tokens</div>
-        <div class="v" id="u-in">-</div>
-        <div class="s">7 天累计</div>
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="🔍 搜模型… (输入/模型名)">
       </div>
-      <div class="plan-item">
-        <div class="k">总花费</div>
-        <div class="v grad" id="u-cost">-</div>
-        <div class="s">美元</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="name">模型</th>
+              <th data-sort="req5h" class="num">5h 请求数</th>
+              <th data-sort="reqM" class="num">月请求数</th>
+              <th data-sort="in" class="num">输入价/M</th>
+              <th data-sort="out" class="num">输出价/M</th>
+              <th data-sort="quota" class="num">额度</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="note">
+        📌 <b>输入/输出价</b>为每 1M tokens 美元价（分档模型按 ≤ 阈值档显示）<br>
+        📌 <b>5h/月请求数</b>为官方按典型用量估算，实际取决于你的 token 消耗<br>
+        📌 DeepSeek 有 Peak/Off-Peak 价差（Peak 时段 01:00-04:00 & 06:00-10:00 UTC）<br>
+        📌 数据源：<a href="https://opencode.ai/docs/zh-cn/go/" target="_blank">opencode.ai 官方文档</a> · 仅作参考，以官网实时为准
       </div>
     </div>
+  </section>
 
-    <div class="toolbar" style="margin-top:12px">
-      <span class="spark" id="usage-time">数据加载中…</span>
+  <!-- 板块: 工具 -->
+  <section class="cat-sec" id="sec-tools">
+    <div class="card glass">
+      <h2>🧩 工具分类</h2>
+      <div class="desc">ATemmie 的工具箱生态</div>
+      <div class="tool-grid" id="tool-grid-tools"></div>
     </div>
-    <div class="note" id="usage-note" style="display:none"></div>
-  </div>
-
-  <div class="card glass">
-    <h2>📊 模型限额与价格</h2>
-    <div class="updated">
-      <span id="update-time">数据加载中…</span>
-      <span class="spark">官方文档直抓 · 自动更新</span>
-    </div>
-
-    <div class="fav-row" id="fav-row">
-      <div class="fav"><div class="fn">DeepSeek V4 Flash</div><div class="fv">5h <b>7,600</b> 次 · $0.22/M in</div></div>
-      <div class="fav"><div class="fn">MiMo-V2.5</div><div class="fv">5h <b>30,100</b> 次 · $0.14/M in</div></div>
-      <div class="fav"><div class="fn">GPT 5.6 Luna</div><div class="fv">5h <b>2,050</b> 次 · $0.20/M in</div></div>
-    </div>
-
-    <div class="toolbar">
-      <input type="search" id="q" placeholder="🔍 搜模型… (输入/模型名)">
-    </div>
-
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr>
-            <th data-sort="name">模型</th>
-            <th data-sort="req5h" class="num">5h 请求数</th>
-            <th data-sort="reqM" class="num">月请求数</th>
-            <th data-sort="in" class="num">输入价/M</th>
-            <th data-sort="out" class="num">输出价/M</th>
-            <th data-sort="quota" class="num">额度</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-
-    <div class="note">
-      📌 <b>输入/输出价</b>为每 1M tokens 美元价（分档模型按 ≤ 阈值档显示）<br>
-      📌 <b>5h/月请求数</b>为官方按典型用量估算，实际取决于你的 token 消耗<br>
-      📌 DeepSeek 有 Peak/Off-Peak 价差（Peak 时段 01:00-04:00 & 06:00-10:00 UTC）<br>
-      📌 数据源：<a href="https://opencode.ai/docs/zh-cn/go/" target="_blank">opencode.ai 官方文档</a> · 仅作参考，以官网实时为准
-    </div>
-  </div>
+  </section>
 
   <div class="footer">
-    ATM 工具箱 v1.0 · 数据自动抓取更新<br>
+    ATM 工具箱 v1.1 · 数据自动抓取更新<br>
     下一个功能想法？跟 Hermes 说 → <a href="https://github.com/ATemmie" target="_blank">github.com/ATemmie</a>
   </div>
 </div>
