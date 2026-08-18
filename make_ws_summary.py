@@ -87,3 +87,30 @@ if rows:
 with open(OUT, 'w', encoding='utf-8') as f:
     json.dump(summary, f, ensure_ascii=False, indent=2)
 print("✔ 生成:", json.dumps(summary, ensure_ascii=False, indent=2)[:1200])
+
+# ---- 生成快捷指令友好纯文本版（iPhone Shortcuts 一键抓取） ----
+def fmt_reset(r):
+    return (r or '').strip()
+
+lines = []
+lines.append('📊 OpenCode Go 用量')
+lines.append('')
+if summary.get('rolling_pct') is not None:
+    lines.append(f"🔄 滚动用量: {summary['rolling_pct']}%  (重置于 {fmt_reset(summary.get('rolling_reset'))})")
+if summary.get('weekly_pct') is not None:
+    lines.append(f"📅 每周用量: {summary['weekly_pct']}%  (重置于 {fmt_reset(summary.get('weekly_reset'))})")
+if summary.get('monthly_pct') is not None:
+    lines.append(f"📆 每月用量: {summary['monthly_pct']}%  (重置于 {fmt_reset(summary.get('monthly_reset'))})")
+lines.append('')
+if summary.get('recent_total_cost_usd') is not None:
+    lines.append(f"💰 已消耗: ${summary['recent_total_cost_usd']} ({summary.get('recent_sessions', 0)} 次会话)")
+if summary.get('balance_usd') is not None:
+    lines.append(f"🏦 当前余额: ${summary['balance_usd']}")
+lines.append('')
+lines.append(f"🕐 更新于 {summary.get('fetched_at', '未知')}")
+
+txt = '\n'.join(lines)
+TXT_OUT = os.path.join(BASE, 'data', 'go_usage.txt')
+with open(TXT_OUT, 'w', encoding='utf-8') as f:
+    f.write(txt)
+print(f"✔ 快捷指令版已生成 -> {TXT_OUT}")
