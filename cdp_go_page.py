@@ -27,5 +27,9 @@ with sync_playwright() as p:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"\n💾 保存 -> {OUT}")
 
-    page.screenshot(path=os.path.join(BASE, 'ws_go_page.png'), full_page=True)
-    print("📸 ws_go_page.png")
+    # 截图失败不影响数据（PNG 被 .gitignore 排除，只是留档）
+    try:
+        page.screenshot(path=os.path.join(BASE, 'ws_go_page.png'), full_page=True)
+        print("📸 ws_go_page.png")
+    except Exception as e:
+        print(f"(截图跳过: {e})")

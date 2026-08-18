@@ -80,12 +80,23 @@ def main():
             except Exception:
                 cdp_alive = False
         if cdp_alive:
-            rc, out, err = run('cdp_go_page.py', [])
-            rc2, out2, err2 = run('make_ws_summary.py', [])
-            push_err = push(f'usage auto {time.strftime("%Y%m%d_%H%M%S")}')
-            if push_err:
-                print(f'push: {push_err}')
-            print(f'usage: rc={rc}/{rc2}')
+            # 抓取失败自动重试（最多 3 次），不静默吃旧数据
+            rc, out, err = 1, '', ''
+            for attempt in range(1, 4):
+                rc, out, err = run('cdp_go_page.py', [])
+                if rc == 0:
+                    print(f'cdp 抓取成功 (第{attempt}次)')
+                    break
+                print(f'cdp 抓取失败 rc={rc} (第{attempt}/3): {err[:200]}')
+                time.sleep(8)
+            if rc != 0:
+                print('❗ cdp 连续 3 次失败，本次跳过 push（数据保持上次）')
+            else:
+                rc2, out2, err2 = run('make_ws_summary.py', [])
+                push_err = push(f'usage auto {time.strftime("%Y%m%d_%H%M%S")}')
+                if push_err:
+                    print(f'push: {push_err}')
+                print(f'usage: rc={rc}/{rc2}')
         else:
             print('⚠️ Edge CDP 仍不可用 — 可能需要手动登录 opencode 一次')
 

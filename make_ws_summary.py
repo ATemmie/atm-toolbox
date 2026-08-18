@@ -34,12 +34,15 @@ def extract_reset(text, label):
     m = re.search(label + r'\s*[\d.]+\s*%\s*重置于\s*([\d\s\w小时分钟天]+?)(?=\n|$|\s*[^\d\s\w小时分钟天])', text)
     return m.group(1).strip() if m else None
 
-# 占比（看 go 页面文本）
+# 占比（看 go 页面文本，最新抓取）
 go_src = os.path.join(BASE, 'data', 'ws_go_page.json')
 go_text = ''
+go_fetched = None
 try:
     with open(go_src, encoding='utf-8') as gf:
-        go_text = json.load(gf).get('text', '')
+        gout = json.load(gf)
+        go_text = gout.get('text', '')
+        go_fetched = gout.get('fetched_at')
 except Exception:
     pass
 
@@ -59,6 +62,10 @@ for t in [go_text, text_go, text_usage]:
         summary['monthly_pct'] = mp
         summary['monthly_reset'] = extract_reset(t, '每月用量')
     break  # 只取第一个有数据的
+
+# fetched_at 优先用最新抓取时间（ws_go_page.json），而非旧 ws_usage.json
+if go_fetched:
+    summary['fetched_at'] = go_fetched
 
 # 余额
 m = re.search(r'当前余额\s*\$?([\d.]+)', text_usage + text_billing)
