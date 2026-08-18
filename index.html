@@ -147,6 +147,57 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
 .fav b { color: var(--cyan); }
 .updated { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 11.5px; color: var(--txt-dim); }
 .spark { font-size: 10.5px; color: var(--txt-dim); }
+
+/* 分类导航 */
+.cat-nav {
+  display: flex; gap: 6px; padding: 6px; margin-bottom: 14px; border-radius: 16px;
+  position: sticky; top: calc(env(safe-area-inset-top) + 8px); z-index: 50;
+}
+.cat-btn {
+  flex: 1; text-align: center; padding: 9px 4px; border-radius: 12px;
+  background: transparent; border: none; color: var(--txt-dim);
+  font-size: 12.5px; cursor: pointer; font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+.cat-btn.active {
+  background: linear-gradient(135deg, rgba(108,92,231,0.35), rgba(165,94,234,0.25));
+  color: var(--txt); font-weight: 700;
+  box-shadow: 0 2px 12px rgba(108,92,231,0.25);
+}
+.cat-sec { display: none; animation: fadeIn 0.25s ease; }
+.cat-sec.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* 一键部署按钮 */
+.deploy-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px; border-radius: 14px; cursor: pointer; font-size: 15px; font-weight: 700;
+  font-family: inherit; color: #fff; border: none;
+  background: linear-gradient(135deg, var(--indigo), var(--violet) 60%, var(--cyan));
+  box-shadow: 0 6px 20px rgba(108,92,231,0.4);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.deploy-btn:active { transform: scale(0.97); }
+.deploy-btn.loading { opacity: 0.6; pointer-events: none; }
+.deploy-ico { font-size: 20px; }
+.deploy-status {
+  font-size: 11px; color: var(--txt-dim); text-align: center;
+  margin-top: 10px; line-height: 1.7;
+}
+.deploy-status.ok { color: var(--green); }
+.deploy-status.err { color: var(--red); }
+
+/* 工具网格 */
+.tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tool-item {
+  display: block; text-decoration: none; color: var(--txt);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+  border-radius: 14px; padding: 14px 12px; transition: background 0.2s;
+}
+.tool-item:active { background: rgba(255,255,255,0.1); }
+.tool-item .ti { font-size: 20px; }
+.tool-item .tn { font-size: 13px; font-weight: 700; margin-top: 6px; }
+.tool-item .td { font-size: 10.5px; color: var(--txt-dim); margin-top: 3px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -257,8 +308,95 @@ const fmt = (n) => n == null ? '-' : Number(n).toLocaleString('en-US');
 const money = (v) => v == null ? '-' : '$' + (Number(v) % 1 === 0 ? Number(v) : Number(v).toFixed(2));
 
 let DATA = null;
+let USAGE = null;
 let sortKey = 'req5h';
 let sortDir = -1;
+
+/* ===== 分类导航 ===== */
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.cat-sec').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.cat).classList.add('active');
+    if (btn.dataset.cat === 'tools') renderTools();
+  });
+});
+
+/* ===== 工具清单（分类） ===== */
+const TOOLS = [
+  { cat: '监控', icon: '📈', name: 'Go 用量监控', desc: '套餐占比实时查看', href: '#', act: 'usage' },
+  { cat: '监控', icon: '💰', name: '模型价格表', desc: '官方价格/限额', href: '#', act: 'pricing' },
+  { cat: '手机', icon: 'ℹ️', name: '用量弹窗', desc: 'iPhone 快捷指令 · 一键弹窗', href: 'shortcut://url?url=' + encodeURIComponent('shortcuts://run-shortcut?name=Go用量'), target: '_system' },
+  { cat: '开发', icon: '🐙', name: 'GitHub', desc: 'ATemmie 主页', href: 'https://github.com/ATemmie' },
+  { cat: '部署', icon: '🚀', name: '一键部署', desc: '手机触发电脑更新', href: '#', act: 'deploy' },
+  { cat: '微信', icon: '💬', name: '联系 Hermes', desc: 'QQ 发消息给猫娘', href: 'https://github.com/ATemmie', target: '_blank' },
+];
+
+function toolCard(t) {
+  const onclick = t.act ? ` onclick="event.preventDefault(); goTool('${t.act}')"` : '';
+  const target = t.target ? ` target="${t.target}"` : ' target="_blank" rel="noopener"';
+  return `<a class="tool-item" href="${t.href}"${onclick}${target}>
+    <div class="ti">${t.icon}</div><div class="tn">${t.name}</div><div class="td">${t.desc}</div>
+  </a>`;
+}
+
+function renderTools() {
+  const cats = [...new Set(TOOLS.map(t => t.cat))];
+  const grids = {
+    home: document.getElementById('tool-grid-home'),
+    tools: document.getElementById('tool-grid-tools'),
+  };
+  if (!grids.home) return;
+  // 总览页：全部工具
+  grids.home.innerHTML = TOOLS.map(toolCard).join('');
+  // 工具页：按分类分组
+  grids.tools.innerHTML = cats.map(c =>
+    `<div style="margin-bottom:14px">
+       <div class="k" style="font-size:12px;color:var(--txt-dim);margin-bottom:8px;padding-left:2px">▸ ${c}</div>
+       <div class="tool-grid">${TOOLS.filter(t => t.cat === c).map(toolCard).join('')}</div>
+     </div>`).join('');
+}
+
+function goTool(act) {
+  if (act === 'usage') { document.querySelector('.cat-btn[data-cat="usage"]').click(); }
+  else if (act === 'pricing') { document.querySelector('.cat-btn[data-cat="pricing"]').click(); }
+  else if (act === 'deploy') { triggerDeploy(); }
+}
+
+/* ===== 一键部署按钮 ===== */
+async function triggerDeploy() {
+  const btn = document.getElementById('btn-deploy');
+  const st = document.getElementById('deploy-status');
+  if (btn.classList.contains('loading')) return;
+  btn.classList.add('loading');
+  st.className = 'deploy-status';
+  st.textContent = '⏳ 正在通知电脑端部署…';
+
+  try {
+    // 先尝试 webhook 通道（若配置了 DEPLOY_HOOK）
+    const hook = typeof DEPLOY_HOOK === 'string' && DEPLOY_HOOK ? DEPLOY_HOOK : '';
+    if (hook) {
+      const res = await fetch(hook, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ type: 'deploy', at: Date.now() }),
+      });
+      // no-cors 拿不到状态，默认按成功处理
+      st.className = 'deploy-status ok';
+      st.textContent = '✅ 指令已发送！电脑端收到后会自动部署，部署完成会推送到你的 QQ/微信';
+      return;
+    }
+    // 未配置 webhook：引导用户发消息给 Hermes
+    st.className = 'deploy-status';
+    st.textContent = '💡 电脑暂未开启自动接收指令。用 QQ/微信给 Hermes 发一句「部署工具箱」即可触发（电脑需开机）';
+    btn.classList.remove('loading');
+  } catch (e) {
+    st.className = 'deploy-status err';
+    st.textContent = '⚠️ 发送失败：' + e.message + '。请用 QQ 给 Hermes 发「部署工具箱」';
+    btn.classList.remove('loading');
+  }
+}
 
 function tierFirst(model) {
   const t = (model.pricing && model.pricing.tiers) || {};
@@ -325,13 +463,6 @@ document.getElementById('q').addEventListener('input', render);
 
 fetch('./data/go_data.json').then(r => r.json()).then(d => {
   DATA = d;
-  const pl = d.plan;
-  document.getElementById('p-first').textContent = '$' + pl.price_first_month_usd;
-  document.getElementById('p-month').textContent = '$' + pl.price_monthly_usd;
-  document.getElementById('p-target').textContent = '6×';
-  document.getElementById('l-5h').textContent = '$' + pl.limits_usd.per_5h;
-  document.getElementById('l-week').textContent = '$' + pl.limits_usd.per_week;
-  document.getElementById('l-month').textContent = '$' + pl.limits_usd.per_month;
   document.getElementById('update-time').textContent = '🕐 数据更新：' + (d.fetched_at || '未知');
   render();
 }).catch(e => {
@@ -339,39 +470,42 @@ fetch('./data/go_data.json').then(r => r.json()).then(d => {
 });
 
 // 用量数据（workspace 真实占比）
-fetch('./data/go_usage_summary.json').then(r => r.json()).then(u => {
+function renderUsage() {
+  if (!USAGE) return;
+  const u = USAGE;
   const fmtUsd = (v) => v == null ? '-' : '$' + (Number(v) % 1 === 0 ? Number(v) : Number(v).toFixed(4));
-  const fmtNum = (v) => v == null ? '-' : Number(v).toLocaleString();
-  document.getElementById('u-req').textContent = fmtNum(u.recent_sessions);
-  document.getElementById('u-in').textContent = fmtNum((u.by_model && u.by_model['deepseek-v4-flash'] && u.by_model['deepseek-v4-flash'].sessions) || u.recent_sessions);
-  document.getElementById('u-cost').textContent = fmtUsd(u.recent_total_cost_usd);
-  document.getElementById('usage-time').textContent = '🕐 用量更新：' + (u.fetched_at || '未知');
+  const card = (k, v, s) => `<div class="plan-item"><div class="k">${k}</div><div class="v grad">${v}</div><div class="s">${s || ''}</div></div>`;
+  let items = '';
+  if (u.rolling_pct != null) items += card('🔄 滚动用量', u.rolling_pct + '%', (u.rolling_reset || '') + '后重置');
+  if (u.weekly_pct != null) items += card('📅 每周用量', u.weekly_pct + '%', (u.weekly_reset || '') + '后重置');
+  if (u.monthly_pct != null) items += card('📆 每月用量', u.monthly_pct + '%', (u.monthly_reset || '') + '后重置');
+  if (u.recent_sessions != null) items += card('💬 会话', u.recent_sessions, '次');
+  if (u.recent_total_cost_usd != null) items += card('💰 花费', fmtUsd(u.recent_total_cost_usd), '美元');
+  const gridHome = document.getElementById('pg-home');
+  const gridUsage = document.getElementById('pg-usage');
+  if (gridHome) gridHome.innerHTML = items;
+  if (gridUsage) gridUsage.innerHTML = items;
 
-  // 更新标签
-  const badge = document.getElementById('usage-badge');
-  if ((u.monthly_pct ?? 0) >= 80) badge.textContent = '🔴 月额度快用完！';
-  else if ((u.weekly_pct ?? 0) >= 80) badge.textContent = '🟠 周额度用大半';
-  else if ((u.monthly_pct ?? 0) > 0) badge.textContent = '🟢 使用中';
-  else badge.textContent = '🟢 未使用';
-
-  // 占比卡（复用 plan-grid 区域显示滚动/每周/每月）
-  const grid = document.querySelector('.plan-grid');
-  if (u.rolling_pct != null || u.weekly_pct != null || u.monthly_pct != null) {
-    let extra = '';
-    if (u.rolling_pct != null) extra += `<div class="plan-item"><div class="k">🔄 滚动用量</div><div class="v grad">${u.rolling_pct}%</div><div class="s">${u.rolling_reset || ''}后重置</div></div>`;
-    if (u.weekly_pct != null) extra += `<div class="plan-item"><div class="k">📅 每周用量</div><div class="v grad">${u.weekly_pct}%</div><div class="s">${u.weekly_reset || ''}后重置</div></div>`;
-    if (u.monthly_pct != null) extra += `<div class="plan-item"><div class="k">📆 每月用量</div><div class="v grad">${u.monthly_pct}%</div><div class="s">${u.monthly_reset || ''}后重置</div></div>`;
-    grid.insertAdjacentHTML('beforeend', extra);
+  const badge = document.getElementById('usage-badge-home');
+  if (badge) {
+    if ((u.monthly_pct ?? 0) >= 80) badge.textContent = '🔴 月额度快用完！';
+    else if ((u.weekly_pct ?? 0) >= 80) badge.textContent = '🟠 周额度用大半';
+    else if ((u.monthly_pct ?? 0) > 0) badge.textContent = '🟢 使用中';
+    else badge.textContent = '🟢 未使用';
   }
-
-  // 模型明细
+  document.getElementById('usage-time').textContent = '🕐 用量更新：' + (u.fetched_at || '未知');
   const names = Object.keys(u.by_model || {});
-  if (names.length) {
-    const note = document.getElementById('usage-note');
+  const note = document.getElementById('usage-note');
+  if (names.length && note) {
     note.style.display = 'block';
     note.innerHTML = '📌 <b>模型消耗：</b>' + names.map(n =>
       `${n} (${u.by_model[n].sessions} 次, $${u.by_model[n].cost_usd.toFixed(4)})`).join('、');
   }
+}
+fetch('./data/go_usage_summary.json').then(r => r.json()).then(u => {
+  USAGE = u;
+  renderUsage();
+  renderTools();
 }).catch(e => {
   document.getElementById('usage-time').textContent = '⚠️ 用量数据未连接（' + e.message + '）';
 });
