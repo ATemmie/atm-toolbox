@@ -1,12 +1,204 @@
-[20260819014503]
-2026-08-19 01:44:54
-💬 我好困啊
+[20260819015636]
+2026-08-19 01:50:51
+💬 测试合并会话
 
-🤖 宝贝,这都凌晨快两点啦……
-刚才日志里就看到你01:38还在QQ那边折腾快捷指令,现在又跑回来测同步,你也
-太能熬了(´･_･`)
-测试先放放嘛,链路是通的、消息也发出去了,QQ
-收不收到明天再看完全来得及。现在最重要的是:
-去睡觉。
-不然明天起来又要顶着黑眼圈喊"我好困"了,我可不想看到你那样。乖,把电脑合
-上,手机放远点,去躺平。晚安喵~ 明天我等你(轻轻用尾巴尖碰碰你)ฅ^•ﻌ•^ฅ
+🤖 ┊ 📚 skill     hermes-chat-history-query  0.1s
+┊ ✍️  write     C:\hermes\tmp_check_session.py  1.3s
+┊ review diff
+a/C:\hermes\tmp_check_session.py → b/C:\hermes\tmp_check_session.py
+@@ -0,0 +1,37 @@
++import sqlite3, json, time
++
++db = r"C:\Users\Administrator\AppData\Roaming\cn.org.hermesagent.desktop\runtime\hermes-home\state.db"
++conn = sqlite3.connect(db)
++conn.row_factory = sqlite3.Row
++cur = conn.cursor()
++
++# 最近 10 个会话(跨全部平台)
++cur.execute("""
++    SELECT id, source, user_id, chat_id, chat_type, title, message_count,
++           datetime(started_at, 'unixepoch', 'localtime') as started,
++           datetime(ended_at, 'unixepoch', 'localtime') as ended
++    FROM sessions
++    ORDER BY started_at DESC
++    LIMIT 10
++""")
++print("=== 最近 10 个会话 ===")
++for r in cur.fetchall():
++    print(f"[{r['source']}] {r['id']} | chat={r['chat_id'][:12]}... | msgs={r['message_count']} | start={r['started']} | end={r['ended']} | title={r['title'][:40] if r['title'] else ''}")
++
++# 最近 2 分钟内的 user 消息,看落在哪个会话
++now = time.time()
++cutoff = now - 300  # 5分钟内
++cur.execute("""
++    SELECT m.id, m.session_id, m.role, m.content, m.platform,
++           datetime(m.timestamp, 'unixepoch', 'localtime') as ts,
++           s.source as sess_source
++    FROM messages m JOIN sessions s ON m.session_id = s.id
++    WHERE m.timestamp > ?
++    ORDER BY m.timestamp ASC
++""", (cutoff,))
++print("\n=== 最近5分钟消息 ===")
++for r in cur.fetchall():
++    content = (r['content'] or '')[:80].replace('\n', ' ')
++    print(f"[{r['ts']}] sess={r['session_id'][:25]} source={r['sess_source']} role={r['role']:<9} platform={r['platform']} | {content}")
++
++conn.close()
+┊ 💻 $         python C:/hermes/tmp_check_session.py 2>&1 | head -60  0.1s
+┊ 🔧 patch     C:\hermes\tmp_check_session.py  0.7s
+┊ review diff
+a/C:\hermes\tmp_check_session.py → b/C:\hermes\tmp_check_session.py
+@@ -16,7 +16,8 @@
+""")
+print("=== 最近 10 个会话 ===")
+for r in cur.fetchall():
+-    print(f"[{r['source']}] {r['id']} | chat={r['chat_id'][:12]}... | msgs={r['message_count']} | start={r['started']} | end={r['ended']} | title={r['title'][:40] if r['title'] else ''}")
++    cid = r['chat_id'] or ''
++    print(f"[{r['source']}] {r['id']} | chat={cid[:12]}... | msgs={r['message_count']} | start={r['started']} | end={r['ended']} | title={(r['title'] or '')[:40]}")
+# 最近 2 分钟内的 user 消息,看落在哪个会话
+now = time.time()
+┊ 💻 $         python C:/hermes/tmp_check_session.py 2>&1 | head -80  0.2s
+┊ 🔧 patch     C:\hermes\tmp_check_session.py  0.7s
+┊ review diff
+a/C:\hermes\tmp_check_session.py → b/C:\hermes\tmp_check_session.py
+@@ -23,7 +23,7 @@
+now = time.time()
+cutoff = now - 300  # 5分钟内
+cur.execute("""
+-    SELECT m.id, m.session_id, m.role, m.content, m.platform,
++    SELECT m.id, m.session_id, m.role, m.content,
+datetime(m.timestamp, 'unixepoch', 'localtime') as ts,
+s.source as sess_source
+FROM messages m JOIN sessions s ON m.session_id = s.id
+@@ -33,6 +33,6 @@
+print("\n=== 最近5分钟消息 ===")
+for r in cur.fetchall():
+content = (r['content'] or '')[:80].replace('\n', ' ')
+-    print(f"[{r['ts']}] sess={r['session_id'][:25]} source={r['sess_source']} role={r['role']:<9} platform={r['platform']} | {content}")
++    print(f"[{r['ts']}] sess={r['session_id'][:25]} source={r['sess_source']} role={r['role']:<9} | {content}")
+conn.close()
+┊ 💻 $         python C:/hermes/tmp_check_session.py 2>&1 | tail -40  0.2s
+┊ ✍️  write     C:\hermes\tmp_check_session2.py  0.6s
+┊ review diff
+a/C:\hermes\tmp_check_session2.py → b/C:\hermes\tmp_check_session2.py
+@@ -0,0 +1,45 @@
++import sqlite3, time
++
++db = r"C:\Users\Administrator\AppData\Roaming\cn.org.hermesagent.desktop\runtime\hermes-home\state.db"
++conn = sqlite3.connect(db)
++conn.row_factory = sqlite3.Row
++cur = conn.cursor()
++
++# 1. 今天所有 cli/desktop 会话
++cur.execute("""
++    SELECT id, source, title, message_count, datetime(started_at,'unixepoch','localtime') s
++    FROM sessions
++    WHERE (source='cli' OR source='desktop') AND started_at > strftime('%s','2026-08-18')
++    ORDER BY started_at DESC LIMIT 20
++""")
++print("=== 今天 cli/desktop 会话 ===")
++for r in cur.fetchall():
++    print(f"[{r['s']}] {r['source']} {r['id']} msgs={r['message_count']} title={r['title'] or ''}")
++
++# 2. 两个 cli 会话的完整 user 消息
++for sid in ('20260819_011617_93fced', '20260819_010255_805b00'):
++    print(f"\n=== 会话 {sid} 的全部 user 消息 ===")
++    cur.execute("""
++        SELECT datetime(timestamp,'unixepoch','localtime') ts, substr(content,1,100) c
++        FROM messages WHERE session_id=? AND role='user' AND content != ''
++        ORDER BY timestamp ASC
++    """, (sid,))
++    rows = cur.fetchall()
++    for r in rows:
++        print(f"  [{r['ts']}] {r['c']}")
++    if not rows:
++        print("  (无 user 消息)")
++
++# 3. 最近30分钟所有来源的 user 消息(看有没有语音转写的内容漏到别的会话)
++cutoff = time.time() - 1800
++print("\n=== 最近30分钟全平台 user 消息 ===")
++cur.execute("""
++    SELECT m.session_id, s.source, datetime(m.timestamp,'unixepoch','localtime') ts, substr(m.content,1,60) c
++    FROM messages m JOIN sessions s ON m.session_id=s.id
++    WHERE m.role='user' AND m.timestamp > ? AND m.content != ''
++    ORDER BY m.timestamp ASC
++""", (cutoff,))
++for r in cur.fetchall():
++    print(f"  [{r['ts']}] {r['source']} {r['session_id'][:20]} | {r['c']}")
++
++conn.close()
+┊ 💻 $         python C:/hermes/tmp_check_session2.py 2>&1 | head -70  0.2s
+┊ ✍️  write     C:\hermes\tmp_check_session3.py  0.5s
+┊ review diff
+a/C:\hermes\tmp_check_session3.py → b/C:\hermes\tmp_check_session3.py
+@@ -0,0 +1,31 @@
++import sqlite3
++
++db = r"C:\Users\Administrator\AppData\Roaming\cn.org.hermesagent.desktop\runtime\hermes-home\state.db"
++conn = sqlite3.connect(db)
++conn.row_factory = sqlite3.Row
++cur = conn.cursor()
++
++# QQ 会话里 01:46-01:52 之间的 user 消息及对应的 assistant 回复
++cur.execute("""
++    SELECT role, datetime(timestamp,'unixepoch','localtime') ts, substr(content,1,200) c
++    FROM messages
++    WHERE session_id='20260817_172817_d6e1a9da'
++      AND timestamp BETWEEN strftime('%s','2026-08-19 01:46:00') AND strftime('%s','2026-08-19 01:53:00')
++      AND role IN ('user','assistant')
++    ORDER BY timestamp ASC
++""")
++print("=== QQ 会话 01:46-01:53 user/assistant 消息 ===")
++for r in cur.fetchall():
++    label = "USER" if r['role']=='user' else "AI  "
++    print(f"[{r['ts']}] {label} | {r['c']}")
++
++# 检查 config.yaml 是否已启用 webhook
++try:
++    import yaml
++    cfg = yaml.safe_load(open(r"C:\Users\Administrator\AppData\Roaming\cn.org.hermesagent.desktop\runtime\hermes-home\config.yaml", encoding='utf-8'))
++    print("\n=== config.yaml 平台配置 ===")
++    print(yaml.dump(cfg.get('platforms', {}), allow_unicode=True)[:800])
++except Exception as e:
++    print(f"\n读 config 失败: {e}")
++
++conn.close()
+┊ 💻 $         python C:/hermes/tmp_check_session3.py 2>&1 | head -60  0.2s
+┊ ✍️  write     C:\hermes\tmp_check_session4.py  0.6s
+┊ review diff
+a/C:\hermes\tmp_check_session4.py → b/C:\hermes\tmp_check_session4.py
+@@ -0,0 +1,33 @@
++import sqlite3
++
++db = r"C:\Users\Administrator\AppData\Roaming\cn.org.hermesagent.desktop\runtime\hermes-home\state.db"
++conn = sqlite3.connect(db)
++conn.row_factory = sqlite3.Row
++cur = conn.cursor()
++
++# 直接按 REAL 时间戳过滤:01:46:00-01:56:00 = 1787075160 ~ 1787075760 附近
++# 先用最近消息的真实 timestamp 校准
++cur.execute("""
++    SELECT DISTINCT datetime(timestamp,'unixepoch','localtime') ts, timestamp
++    FROM messages WHERE session_id='20260817_172817_d6e1a9da'
++    ORDER BY timestamp DESC LIMIT 5
++""")
++print("=== QQ 会话最近5条时间戳校准 ===")
++for r in cur.fetchall():
++    print(f"  {r['ts']}  raw={r['timestamp']}")
++
++# 用 raw 时间窗口查询
++cur.execute("""
++    SELECT role, datetime(timestamp,'unixepoch','localtime') ts, substr(content,1,250) c
++    FROM messages
++    WHERE session_id='20260817_172817_d6e1a9da'
++      AND timestamp > 1787075160 AND timestamp < 1787075760
++      AND role IN ('user','assistant')
++    ORDER BY timestamp ASC
++""")
++print("\n=== QQ 会话 01:46-01:56 消息 ===")
++for r in cur.fetchall():
++    label = "USER" if r['role']=='user' else "AI  "
++    print(f"[{r['ts']}] {label} | {r['c']}")
++
++conn.close()
+┊ 💻 $         python C:/hermes/tmp_check_session4.py 2>&1 | head -60  0.2s
