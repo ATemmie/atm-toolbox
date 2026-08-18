@@ -172,7 +172,7 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
 .deploy-btn {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
   padding: 14px; border-radius: 14px; cursor: pointer; font-size: 15px; font-weight: 700;
-  font-family: inherit; color: #fff; border: none;
+  font-family: inherit; color: #fff; border: none; text-decoration: none;
   background: linear-gradient(135deg, var(--indigo), var(--violet) 60%, var(--cyan));
   box-shadow: 0 6px 20px rgba(108,92,231,0.4);
   transition: transform 0.15s, box-shadow 0.2s;
@@ -180,6 +180,23 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
 .deploy-btn:active { transform: scale(0.97); }
 .deploy-btn.loading { opacity: 0.6; pointer-events: none; }
 .deploy-ico { font-size: 20px; }
+.deploy-flex { display: flex; gap: 18px; align-items: center; margin-top: 16px; }
+.deploy-qr {
+  flex-shrink: 0; text-align: center; padding: 10px;
+  background: #fff; border-radius: 14px;
+}
+.deploy-qr img { display: block; border-radius: 8px; }
+.deploy-qr-txt { font-size: 10.5px; color: #444; margin-top: 6px; font-weight: 600; }
+.deploy-steps { flex: 1; display: grid; gap: 8px; }
+.deploy-steps .step {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12.5px; color: var(--txt); line-height: 1.5;
+}
+.deploy-steps .step b {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 11px;
+  background: rgba(108,92,231,0.25); color: var(--cyan);
+}
 .deploy-status {
   font-size: 11px; color: var(--txt-dim); text-align: center;
   margin-top: 10px; line-height: 1.7;
@@ -221,12 +238,24 @@ tbody tr:active { background: rgba(255,255,255,0.03); }
   <!-- 板块: 总览 -->
   <section class="cat-sec active" id="sec-home">
     <div class="card glass">
-      <h2>🚀 一键部署</h2>
-      <div class="desc">手动触发电脑端刷新数据并部署上线（跟所说的话让 Hermes 干活等价，只是用按钮代替打字）</div>
-      <button class="deploy-btn" id="btn-deploy" onclick="triggerDeploy()">
-        <span class="deploy-ico">🚀</span> 一键部署 / 立即更新
-      </button>
-      <div class="deploy-status" id="deploy-status">电脑离线时按钮无效 · 数据每 30 分钟自动更新</div>
+      <h2>📲 一键部署到 iPhone</h2>
+      <div class="desc">点击「获取捷径」Safari 会跳转到快捷指令 App，一键添加《Go 用量》弹窗快捷指令（也可手机扫码安装）</div>
+      <a class="deploy-btn" href="https://atemmie.github.io/atm-toolbox/downloads/go-usage.shortcut" download>
+        <span class="deploy-ico">📲</span> 获取捷径 · 部署到我的 iPhone
+      </a>
+      <div class="deploy-flex">
+        <div class="deploy-qr">
+          <img src="downloads/qr-go-usage.png" alt="扫码安装快捷指令" width="120" height="120">
+          <div class="deploy-qr-txt">📱 手机扫码安装</div>
+        </div>
+        <div class="deploy-steps">
+          <div class="step"><b>1</b> 点击上方按钮 / 扫码（Safari 打开）</div>
+          <div class="step"><b>2</b> 弹窗点「在快捷指令中打开」</div>
+          <div class="step"><b>3</b> 点底部「添加不受信任的快捷指令」</div>
+          <div class="step"><b>4</b> 桌面长按图标 → 添加到主屏幕 ✨</div>
+        </div>
+      </div>
+      <div class="deploy-status" id="deploy-status">安装完成后：自动获取线上最新用量 → 屏幕上方弹窗显示 · 每 30 分钟数据自动更新</div>
     </div>
     <div class="card glass">
       <h2>📊 我的套餐用量 <span class="badge" id="usage-badge-home">连接中…</span></h2>
@@ -327,9 +356,9 @@ document.querySelectorAll('.cat-btn').forEach(btn => {
 const TOOLS = [
   { cat: '监控', icon: '📈', name: 'Go 用量监控', desc: '套餐占比实时查看', href: '#', act: 'usage' },
   { cat: '监控', icon: '💰', name: '模型价格表', desc: '官方价格/限额', href: '#', act: 'pricing' },
-  { cat: '手机', icon: 'ℹ️', name: '用量弹窗', desc: 'iPhone 快捷指令 · 一键弹窗', href: 'shortcut://url?url=' + encodeURIComponent('shortcuts://run-shortcut?name=Go用量'), target: '_system' },
+  { cat: '手机', icon: '📲', name: '安装快捷指令', desc: '一键部署《Go 用量》弹窗到 iPhone', href: 'https://atemmie.github.io/atm-toolbox/downloads/go-usage.shortcut' },
   { cat: '开发', icon: '🐙', name: 'GitHub', desc: 'ATemmie 主页', href: 'https://github.com/ATemmie' },
-  { cat: '部署', icon: '🚀', name: '一键部署', desc: '手机触发电脑更新', href: '#', act: 'deploy' },
+  { cat: '监控', icon: '🚀', name: '一键部署', desc: '快捷指令安装包下载', href: 'https://atemmie.github.io/atm-toolbox/downloads/go-usage.shortcut' },
   { cat: '微信', icon: '💬', name: '联系 Hermes', desc: 'QQ 发消息给猫娘', href: 'https://github.com/ATemmie', target: '_blank' },
 ];
 
@@ -361,40 +390,8 @@ function renderTools() {
 function goTool(act) {
   if (act === 'usage') { document.querySelector('.cat-btn[data-cat="usage"]').click(); }
   else if (act === 'pricing') { document.querySelector('.cat-btn[data-cat="pricing"]').click(); }
-  else if (act === 'deploy') { triggerDeploy(); }
-}
-
-/* ===== 一键部署按钮 ===== */
-async function triggerDeploy() {
-  const btn = document.getElementById('btn-deploy');
-  const st = document.getElementById('deploy-status');
-  if (btn.classList.contains('loading')) return;
-  btn.classList.add('loading');
-  st.className = 'deploy-status';
-  st.textContent = '⏳ 正在通知电脑端部署…';
-
-  try {
-    // 先尝试 webhook 通道（若配置了 DEPLOY_HOOK）
-    const hook = typeof DEPLOY_HOOK === 'string' && DEPLOY_HOOK ? DEPLOY_HOOK : '';
-    if (hook) {
-      const res = await fetch(hook, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ type: 'deploy', at: Date.now() }),
-      });
-      // no-cors 拿不到状态，默认按成功处理
-      st.className = 'deploy-status ok';
-      st.textContent = '✅ 指令已发送！电脑端收到后会自动部署，部署完成会推送到你的 QQ/微信';
-      return;
-    }
-    // 未配置 webhook：引导用户发消息给 Hermes
-    st.className = 'deploy-status';
-    st.textContent = '💡 电脑暂未开启自动接收指令。用 QQ/微信给 Hermes 发一句「部署工具箱」即可触发（电脑需开机）';
-    btn.classList.remove('loading');
-  } catch (e) {
-    st.className = 'deploy-status err';
-    st.textContent = '⚠️ 发送失败：' + e.message + '。请用 QQ 给 Hermes 发「部署工具箱」';
-    btn.classList.remove('loading');
+  else if (act === 'deploy') {
+    window.open('https://atemmie.github.io/atm-toolbox/downloads/go-usage.shortcut', '_blank');
   }
 }
 
