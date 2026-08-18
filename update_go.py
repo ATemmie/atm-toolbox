@@ -195,6 +195,7 @@ def diff(old, new):
 
 def main():
     push = '--push' in sys.argv
+    quiet = '--quiet' in sys.argv
     fetch()
     nd = parse()
     old = None
@@ -202,13 +203,15 @@ def main():
         with open(DATA, encoding='utf-8') as f:
             old = json.load(f)
     changes = diff(old, nd)
-    print('--- 变化摘要 ---')
-    for c in changes:
-        print(' ', c)
+    if not quiet:
+        print('--- 变化摘要 ---')
+        for c in changes:
+            print(' ', c)
 
     with open(DATA, 'w', encoding='utf-8') as f:
         json.dump(nd, f, ensure_ascii=False, indent=2)
-    print(f'✔ 数据已更新: {len(nd["models"])} 模型 -> {DATA}')
+    if not quiet:
+        print(f'✔ 数据已更新: {len(nd["models"])} 模型 -> {DATA}')
 
     if not push:
         return 0
@@ -223,7 +226,14 @@ def main():
         if r.returncode != 0 and 'nothing to commit' not in r.stderr:
             print(f'git: {r.stderr[:300]}')
             continue
-    print('✔ 已 push')
+    if not quiet:
+        print('✔ 已 push')
+    # --quiet 模式：只有真正有变化才输出（cron 静默规则）
+    real = [c for c in changes if c != '无变化']
+    if quiet and real:
+        print('⚠️ OpenCode Go 套餐有变动！')
+        for c in real:
+            print(' ', c)
     return 0
 
 if __name__ == '__main__':
