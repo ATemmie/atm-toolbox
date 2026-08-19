@@ -1,8 +1,8 @@
 {
-  "fetched_at": "2026-08-19 13:15:16",
+  "fetched_at": "2026-08-19 13:18:16",
   "source": "workspace console",
-  "rolling_pct": 18.0,
-  "rolling_reset": "3 小时 22 分钟",
+  "rolling_pct": 20.0,
+  "rolling_reset": "3 小时 19 分钟",
   "weekly_pct": 94.0,
   "weekly_reset": "4 天 18 小时",
   "monthly_pct": 51.0,
