@@ -1,6 +1,6 @@
 {
   "source": "https://opencode.ai/docs/zh-cn/go/",
-  "fetched_at": "2026-08-19",
+  "fetched_at": "2026-08-20",
   "plan": {
     "name": "OpenCode Go",
     "price_first_month_usd": 5,
@@ -343,6 +343,33 @@
       "privacy": {
         "training": "不使用",
         "retention": "0 天"
+      }
+    },
+    {
+      "name": "Muse Spark 1.2 Contributor",
+      "requests": {
+        "per_5h": 45300,
+        "per_week": 113300,
+        "per_month": 226600
+      },
+      "pricing": {
+        "tiers": {
+          "默认": {
+            "input": 0.1,
+            "output": 0.2,
+            "cache_read": 0.002,
+            "cache_write": null,
+            "quota": 60.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "muse-spark-1.2-contributor",
+        "endpoint": "https://opencode.ai/zen/go/v1/responses"
+      },
+      "privacy": {
+        "training": "是",
+        "retention": "非 ZDR"
       }
     },
     {
