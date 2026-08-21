@@ -2,8 +2,8 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
-from gen_cards import generate_all as download_images
-from gen_map import generate_all_maps
+from dl_bing_img import main as download_images
+from gen_leaflet_map import generate_maps
 from doc_content import (build_cover, build_day_section, build_weather_section,
                          build_transport_section, build_top10_section, build_day_type_table)
 from doc_builder import create_document
@@ -29,8 +29,14 @@ def main():
     images = download_images()
 
     # 2. 生成路线地图
-    print("\n[2/3] 生成路线地图...")
-    map1, map2 = generate_all_maps()
+    print("\n[2/3] 生成真实地图...")
+    generate_maps()
+    # 用Playwright截图HTML地图
+    import asyncio
+    from screenshot_map import main as do_screenshots
+    asyncio.run(do_screenshots())
+    map1 = os.path.join(os.path.dirname(__file__), "maps", "day1_route.png")
+    map2 = os.path.join(os.path.dirname(__file__), "maps", "day2_route.png")
 
     # 3. 组装Word文档
     print("\n[3/3] 组装Word文档...")
@@ -56,8 +62,13 @@ def main():
     out = os.path.join(os.path.dirname(__file__), "澳门家庭旅行攻略.docx")
     doc.save(out)
     print(f"\n✅ 文档已保存: {out}")
-    print(f"   图片: {len(images)} 张")
-    print(f"   行程: Day1 {len(DAY1_STOPS)}站 + Day2 {len(DAY2_STOPS)}站")
+    # 复制到共享文件夹
+    import shutil
+    shared = r"\\192.168.0.127\Shared\atm-toolbox\澳门旅行"
+    os.makedirs(shared, exist_ok=True)
+    dest = os.path.join(shared, "澳门家庭旅行攻略.docx")
+    shutil.copy2(out, dest)
+    print(f"   共享: {dest}")
 
 if __name__ == "__main__":
     main()

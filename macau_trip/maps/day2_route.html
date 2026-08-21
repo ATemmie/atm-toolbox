@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>25日·氹仔+路氹路线</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    body { margin: 0; padding: 0; }
+    #map { width: 1200px; height: 800px; }
+    .marker-label {
+        background: rgba(26,26,46,0.9); color: white; border: none;
+        border-radius: 4px; padding: 2px 6px; font-size: 13px; font-weight: bold;
+        font-family: "Microsoft YaHei", sans-serif;
+    }
+    .marker-label::before { border-top-color: rgba(26,26,46,0.9); }
+</style></head><body>
+<div id="map"></div>
+<script>
+var map = L.map('map', {zoomControl: true}).setView([22.1485, 113.55825], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+}).addTo(map);
+
+        L.circleMarker([22.1447, 113.5583], {
+            radius: 10, fillColor: '#E17055', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('1.威尼斯人', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1485, 113.554], {
+            radius: 10, fillColor: '#6C5CE7', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('2.官也街', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1505, 113.553], {
+            radius: 10, fillColor: '#00B894', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('3.嘉模圣母堂', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1535, 113.554], {
+            radius: 10, fillColor: '#0984E3', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('4.龙环葡韵', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1485, 113.5635], {
+            radius: 10, fillColor: '#FDCB6E', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('5.永利皇宫', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1465, 113.5605], {
+            radius: 10, fillColor: '#E17055', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('6.银河', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1445, 113.5585], {
+            radius: 10, fillColor: '#6C5CE7', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('7.巴黎人', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1435, 113.5565], {
+            radius: 10, fillColor: '#00B894', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('8.伦敦人', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+L.polyline([[22.1447,113.5583],[22.1485,113.554],[22.1505,113.553],[22.1535,113.554],[22.1485,113.5635],[22.1465,113.5605],[22.1445,113.5585],[22.1435,113.5565]], {color: '#E17055', weight: 4, opacity: 0.8, dashArray: '10, 6'}).addTo(map);
+map.fitBounds(L.latLngBounds([[22.1447,113.5583],[22.1485,113.554],[22.1505,113.553],[22.1535,113.554],[22.1485,113.5635],[22.1465,113.5605],[22.1445,113.5585],[22.1435,113.5565]]).pad(0.1));
+</script></body></html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>24日·澳门半岛路线（南→北）</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    body { margin: 0; padding: 0; }
+    #map { width: 1200px; height: 800px; }
+    .marker-label {
+        background: rgba(26,26,46,0.9); color: white; border: none;
+        border-radius: 4px; padding: 2px 6px; font-size: 13px; font-weight: bold;
+        font-family: "Microsoft YaHei", sans-serif;
+    }
+    .marker-label::before { border-top-color: rgba(26,26,46,0.9); }
+</style></head><body>
+<div id="map"></div>
+<script>
+var map = L.map('map', {zoomControl: true}).setView([22.17135, 113.5468], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+}).addTo(map);
+
+        L.circleMarker([22.1447, 113.5583], {
+            radius: 10, fillColor: '#E17055', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('1.威尼斯人', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1892, 113.5353], {
+            radius: 10, fillColor: '#6C5CE7', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('2.妈阁庙', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1788, 113.5438], {
+            radius: 10, fillColor: '#00B894', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('3.澳门塔', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.174, 113.549], {
+            radius: 10, fillColor: '#0984E3', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('4.南湾湖', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.192, 113.543], {
+            radius: 10, fillColor: '#FDCB6E', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('5.议事亭前地', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1945, 113.542], {
+            radius: 10, fillColor: '#E17055', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('6.玫瑰堂', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.1972, 113.543], {
+            radius: 10, fillColor: '#6C5CE7', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('7.大三巴', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+        L.circleMarker([22.198, 113.5445], {
+            radius: 10, fillColor: '#00B894', color: '#fff', weight: 2, fillOpacity: 0.9
+        }).addTo(map).bindTooltip('8.大炮台', {permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'});
+        
+L.polyline([[22.1447,113.5583],[22.1892,113.5353],[22.1788,113.5438],[22.174,113.549],[22.192,113.543],[22.1945,113.542],[22.1972,113.543],[22.198,113.5445]], {color: '#E17055', weight: 4, opacity: 0.8, dashArray: '10, 6'}).addTo(map);
+map.fitBounds(L.latLngBounds([[22.1447,113.5583],[22.1892,113.5353],[22.1788,113.5438],[22.174,113.549],[22.192,113.543],[22.1945,113.542],[22.1972,113.543],[22.198,113.5445]]).pad(0.1));
+</script></body></html>
