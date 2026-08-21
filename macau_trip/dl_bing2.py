@@ -50,9 +50,16 @@ def bing_search_debug(query):
     
     for pat in patterns:
         matches = re.findall(pat, html, re.I)
-        # 过滤掉bing自己的域名
-        good = [m for m in (matches[0] if isinstance(m, tuple) else m for m in matches)
-                if isinstance(m, str) and "bing.com" not in m and len(m) > 20]
+        good = []
+        for m in matches:
+            u = m[0] if isinstance(m, tuple) else m
+            if not isinstance(u, str) or len(u) < 20 or "bing.com" in u:
+                continue
+            # 清理URL尾巴的JSON残留
+            u = re.sub(r'[&].*$', '', u)
+            u = re.sub(r'\\u00.*$', '', u)
+            if u.startswith("http"):
+                good.append(u)
         if good:
             return good[0]
     
@@ -60,6 +67,7 @@ def bing_search_debug(query):
     all_urls = re.findall(r'https?://[^"\'\\s<>]+', html)
     img_urls = [u for u in all_urls if any(ext in u.lower() for ext in ['.jpg', '.jpeg', '.png', '.webp']) 
                 and 'bing.com' not in u and 'microsoft' not in u and len(u) > 30]
+    img_urls = [re.sub(r'[&].*$', '', u) for u in img_urls]
     if img_urls:
         return img_urls[0]
     
@@ -76,7 +84,14 @@ def download(url, fp):
            "--proxy", PROXY, "--connect-timeout", "10", "--max-time", "20", url]
     subprocess.run(cmd, capture_output=True, timeout=30)
     if os.path.exists(fp) and os.path.getsize(fp) > 5000:
-        return True
+        # 验证是否为真实图片
+        try:
+            from PIL import Image as PILImage
+            img = PILImage.open(fp)
+            img.verify()
+            return True
+        except Exception:
+            pass
     if os.path.exists(fp):
         os.remove(fp)
     return False

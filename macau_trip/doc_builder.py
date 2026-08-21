@@ -52,14 +52,27 @@ def add_para(doc, text, bold=False, size=11, color=None, align=None, space_after
     return p
 
 def add_image_if_exists(doc, img_path, width=Inches(5.5)):
-    """添加图片（如果文件存在）"""
-    if img_path and os.path.exists(img_path) and os.path.getsize(img_path) > 1000:
+    """添加图片（如果文件存在且是有效图片）"""
+    if not img_path or not os.path.exists(img_path):
+        return False
+    size = os.path.getsize(img_path)
+    if size < 5000:
+        return False
+    # 验证是否为真实图片文件
+    try:
+        from PIL import Image as PILImage
+        img = PILImage.open(img_path)
+        img.verify()
+    except Exception:
+        return False
+    try:
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run = p.add_run()
         run.add_picture(img_path, width=width)
         return True
-    return False
+    except Exception:
+        return False
 
 def load_images():
     """加载图片索引"""
