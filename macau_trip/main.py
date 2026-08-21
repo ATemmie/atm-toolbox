@@ -2,7 +2,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
-from download_images import download_images
+from dl_wiki import search_and_download as download_images
 from gen_map import generate_all_maps
 from doc_content import (build_cover, build_day_section, build_weather_section,
                          build_transport_section, build_top10_section, build_day_type_table)

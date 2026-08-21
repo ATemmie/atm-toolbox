@@ -2,7 +2,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
-from docx.shared import Inches, Pt, RGBColor
+from docx.shared import Inches, Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
