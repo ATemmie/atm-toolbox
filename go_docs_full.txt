@@ -107,7 +107,7 @@ MiMo-V2.5
 MiMo-V2.5-Pro
 MiniMax M3
 MiniMax M2.7
-Muse Spark 1.2 Contributor
+Muse Spark 1.2 Contributor (仅限部分地区)
 Qwen3.8 Max
 Qwen3.7 Max
 Qwen3.7 Plus
@@ -284,7 +284,7 @@ DeepSeek V4 Flash	不使用	0 天
 Hy3	不使用	0 天
 Grok 4.5: ZDR 会禁用依赖所存储数据的重要 API 功能，包括有状态的 Responses API、Files and Collections 和 Batch API。了解更多。
 GPT 5.6 Luna: 所有 API 功能的使用都会生成滥用监控日志，并最多保留 30 天。了解更多。
-Muse Spark 1.2 Contributor: 以允许使用你的提示词和补全结果训练未来的 Meta 模型为交换，token 价格可获得大幅折扣。了解更多。
+Muse Spark 1.2 Contributor: 以允许使用你的提示词和补全结果训练未来的 Meta 模型为交换，token 价格可获得大幅折扣。仅在 Meta 的地理使用政策允许的地区提供。了解更多。
 DeepSeek V4 Flash: ZDR 协议每月续签。当前协议有效期至 2026 年 8 月 31 日。
 目标
 
