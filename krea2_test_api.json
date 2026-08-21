@@ -3,13 +3,13 @@
     "class_type": "UNETLoader",
     "inputs": {
       "unet_name": "krea2_turbo_fp8_scaled.safetensors",
-      "weight_dtype": "fp8_e4m3fn"
+      "weight_dtype": "default"
     }
   },
   "2": {
-    "class_type": "DualCLIPLoader",
+    "class_type": "CLIPLoader",
     "inputs": {
-      "clip_name1": "qwen3vl_4b_fp8_scaled.safetensors",
+      "clip_name": "qwen3vl_4b_fp8_scaled.safetensors",
       "type": "krea2"
     }
   },
