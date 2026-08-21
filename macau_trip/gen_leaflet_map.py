@@ -40,8 +40,8 @@ def make_html(stops, title, filename):
                  "#0984E3", "#FDCB6E"][i % 10]
         markers_js += f"""
         L.circleMarker([{s['lat']}, {s['lon']}], {{
-            radius: 10, fillColor: '{color}', color: '#fff', weight: 2, fillOpacity: 0.9
-        }}).addTo(map).bindTooltip('{s["label"]}', {{permanent: true, direction: 'top', offset: [0, -10], className: 'marker-label'}});
+            radius: 12, fillColor: '{color}', color: '#fff', weight: 2, fillOpacity: 0.9
+        }}).addTo(map).bindTooltip('{i+1}', {{permanent: true, direction: 'center', className: 'num-label'}});
         """
     
     polyline = ",".join([f"[{s['lat']},{s['lon']}]" for s in stops])
@@ -55,12 +55,11 @@ def make_html(stops, title, filename):
 <style>
     body {{ margin: 0; padding: 0; }}
     #map {{ width: 1200px; height: 800px; }}
-    .marker-label {{
-        background: rgba(26,26,46,0.9); color: white; border: none;
-        border-radius: 4px; padding: 2px 6px; font-size: 13px; font-weight: bold;
-        font-family: "Microsoft YaHei", sans-serif;
+    .num-label {{
+        background: transparent; color: white; border: none;
+        font-size: 14px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        font-family: Arial, sans-serif; padding: 0;
     }}
-    .marker-label::before {{ border-top-color: rgba(26,26,46,0.9); }}
 </style></head><body>
 <div id="map"></div>
 <script>
