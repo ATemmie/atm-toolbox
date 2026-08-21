@@ -2,7 +2,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
-from dl_real_img import main as download_images
+from dl_bing2 import main as download_images
 from gen_leaflet_map import generate_maps
 from doc_content import (build_cover, build_day_section, build_weather_section,
                          build_transport_section, build_top10_section, build_day_type_table)
