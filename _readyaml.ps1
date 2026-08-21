@@ -1,2 +1,0 @@
-$f = "C:\Users\ATemmie\AppData\Roaming\Comfy Desktop\instance-model-paths\inst-1787294449960.yaml"
-if(Test-Path $f){ Get-Content $f } else { "NOT FOUND: $f"; Get-ChildItem "C:\Users\ATemmie\AppData\Roaming\Comfy Desktop" -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object FullName | Out-String -Width 250 }
