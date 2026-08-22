@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+body { margin:0; padding:0; }
+#map { width:1200px; height:750px; }
+.legend {
+    position:absolute; bottom:20px; right:20px; z-index:1000;
+    background:rgba(255,255,255,0.95); padding:10px 14px; border-radius:8px;
+    font-family:Arial,sans-serif; font-size:12px; box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.legend-item { display:flex; align-items:center; margin:3px 0; }
+.legend-dot { width:12px; height:12px; border-radius:50%; margin-right:6px; border:1px solid #fff; }
+.title-bar {
+    position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000;
+    background:rgba(30,30,30,0.85); color:#fff; padding:8px 20px; border-radius:20px;
+    font-family:Arial,sans-serif; font-size:16px; font-weight:bold;
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+</style></head><body>
+<div class="title-bar">Day 2: 氹仔+路氹</div>
+<div id="map"></div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>威尼斯人</div>
+<div class="legend-item"><div class="legend-dot" style="background:#FDCB6E"></div>官也街</div>
+<div class="legend-item"><div class="legend-dot" style="background:#E17055"></div>嘉模圣母堂</div>
+<div class="legend-item"><div class="legend-dot" style="background:#0984E3"></div>龙环葡韵</div>
+<div class="legend-item"><div class="legend-dot" style="background:#FDCB6E"></div>午餐</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>威尼斯人休息</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>永利皇宫</div>
+<div class="legend-item"><div class="legend-dot" style="background:#00B894"></div>SkyCab缆车</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>银河</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>巴黎人</div>
+<div class="legend-item"><div class="legend-dot" style="background:#6C5CE7"></div>伦敦人</div>
+<div class="legend-item"><div class="legend-dot" style="background:#FDCB6E"></div>晚餐</div>
+</div>
+<script>
+var map = L.map('map',{zoomControl:true}).setView([22.149725,113.55695833333334],14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© OpenStreetMap', maxZoom:19
+}).addTo(map);
+
+var stops = [{"lat": 22.1436, "lon": 113.5578, "color": "#6C5CE7", "name": "威尼斯人"}, {"lat": 22.1523, "lon": 113.5514, "color": "#FDCB6E", "name": "官也街"}, {"lat": 22.1537, "lon": 113.5498, "color": "#E17055", "name": "嘉模圣母堂"}, {"lat": 22.1552, "lon": 113.5508, "color": "#0984E3", "name": "龙环葡韵"}, {"lat": 22.153, "lon": 113.551, "color": "#FDCB6E", "name": "午餐"}, {"lat": 22.1436, "lon": 113.5578, "color": "#6C5CE7", "name": "威尼斯人休息"}, {"lat": 22.1499, "lon": 113.562, "color": "#6C5CE7", "name": "永利皇宫"}, {"lat": 22.1499, "lon": 113.562, "color": "#00B894", "name": "SkyCab缆车"}, {"lat": 22.1523, "lon": 113.5623, "color": "#6C5CE7", "name": "银河"}, {"lat": 22.1478, "lon": 113.5606, "color": "#6C5CE7", "name": "巴黎人"}, {"lat": 22.1474, "lon": 113.559, "color": "#6C5CE7", "name": "伦敦人"}, {"lat": 22.148, "lon": 113.559, "color": "#FDCB6E", "name": "晚餐"}];
+var coords = [];
+stops.forEach(function(s,i){
+    L.circleMarker([s.lat,s.lon],{
+        radius:14, fillColor:s.color, color:'#fff', weight:2.5, fillOpacity:0.9
+    }).addTo(map).bindTooltip(String(i+1),{permanent:true, direction:'center', className:'num-label'});
+    coords.push([s.lat,s.lon]);
+});
+
+L.polyline(coords,{color:'#E17055', weight:4, opacity:0.85, dashArray:'10,6'}).addTo(map);
+map.fitBounds(coords,{padding:[60,60]});
+</script>
+</body></html>
