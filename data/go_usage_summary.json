@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-08-22 23:54:16",
+  "fetched_at": "2026-08-22 23:57:17",
   "source": "workspace console",
   "rolling_pct": 0.0,
   "rolling_reset": "5 小时 0 分钟",
   "weekly_pct": 100.0,
   "weekly_reset": "1 天 8 小时",
   "monthly_pct": 54.0,
-  "monthly_reset": "24 天 15 小时",
+  "monthly_reset": "24 天 14 小时",
   "recent_sessions": 50,
   "recent_total_cost_usd": 0.2726,
   "by_model": {
