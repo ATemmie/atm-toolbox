@@ -40,7 +40,9 @@ def main():
 
     # 3. 组装Word文档
     print("\n[3/3] 组装Word文档...")
+    from doc_builder import add_page_header_footer
     doc = create_document()
+    add_page_header_footer(doc)
 
     build_cover(doc)
     build_day_type_table(doc)
