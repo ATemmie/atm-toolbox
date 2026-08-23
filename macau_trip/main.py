@@ -1,76 +1,42 @@
-"""主入口：下载图片→生成地图→组装Word"""
-import os, sys
+"""主入口：使用config.py的完整流程"""
+import sys, os, asyncio
 sys.path.insert(0, os.path.dirname(__file__))
 
-from dl_bing2 import main as download_images
-from gen_leaflet_map import generate_maps
-from doc_content import (build_cover, build_day_section, build_weather_section,
-                         build_transport_section, build_top10_section, build_day_type_table)
-from doc_builder import create_document
-from config import DAY1_STOPS, DAY2_STOPS
-
-IMG_KEY_MAP = {
-    "a_ma_temple": "妈阁庙", "macau_tower": "澳门旅游塔",
-    "senado_square": "议事亭前地", "st_pauls": "大三巴",
-    "st_dominic": "玫瑰圣母堂", "monte_fort": "大炮台",
-    "nam_van_lake": "南湾湖", "rua_cunha": "官也街",
-    "carmel_church": "嘉模圣母堂", "taipa_houses": "龙环葡韵",
-    "wynn_palace": "永利皇宫", "parisian": "巴黎人",
-    "londoner": "伦敦人", "galaxy": "银河", "venetian": "威尼斯人",
-}
+from config import (
+    download_all_images, generate_map_html, screenshot_map,
+    build_document, MAP_DIR, DAY1_STOPS, DAY2_STOPS, FINAL_DOC
+)
 
 def main():
-    print("=" * 50)
-    print("🇲🇴 澳门家庭旅行文档生成器")
-    print("=" * 50)
+    print("=" * 60)
+    print("澳门家庭旅行执行表 — 文档生成 v2（美化版）")
+    print("=" * 60)
 
     # 1. 下载图片
-    print("\n[1/3] 下载景点图片...")
-    images = download_images()
+    print("\n[1/4] 下载景点图片...")
+    img_dict = download_all_images()
+    ok_count = sum(1 for v in img_dict.values() if v)
+    print(f"\n图片: {ok_count}/{len(img_dict)} 成功")
 
-    # 2. 生成路线地图
-    print("\n[2/3] 生成真实地图...")
-    generate_maps()
-    # 用Playwright截图HTML地图
-    import asyncio
-    from screenshot_map import main as do_screenshots
-    asyncio.run(do_screenshots())
-    map1 = os.path.join(os.path.dirname(__file__), "maps", "day1_route.png")
-    map2 = os.path.join(os.path.dirname(__file__), "maps", "day2_route.png")
+    # 2. 生成地图HTML
+    print("\n[2/4] 生成路线地图...")
+    day1_html = generate_map_html(1, DAY1_STOPS, "Day 1: 澳门半岛 南→北")
+    day2_html = generate_map_html(2, DAY2_STOPS, "Day 2: 氹仔+路氹")
 
-    # 3. 组装Word文档
-    print("\n[3/3] 组装Word文档...")
-    from doc_builder import add_page_header_footer
-    doc = create_document()
-    add_page_header_footer(doc)
+    # 3. Playwright截图
+    print("\n[3/4] 截图地图...")
+    day1_png = str(MAP_DIR / "day1_map.png")
+    day2_png = str(MAP_DIR / "day2_map.png")
+    asyncio.run(screenshot_map(day1_html, day1_png))
+    asyncio.run(screenshot_map(day2_html, day2_png))
 
-    build_cover(doc)
-    build_day_type_table(doc)
-    build_day_section(
-        doc, DAY1_STOPS,
-        "🗓️ Day 1 · 8月24日（周一）· 澳门半岛 南→北",
-        "E17055", IMG_KEY_MAP, map1, "day1_afternoon"
-    )
-    build_day_section(
-        doc, DAY2_STOPS,
-        "🗓️ Day 2 · 8月25日（周二）· 氹仔 + 路氹",
-        "6C5CE7", IMG_KEY_MAP, map2, "day2_morning"
-    )
-    build_weather_section(doc)
-    build_transport_section(doc)
-    build_top10_section(doc)
+    # 4. 组装Word文档
+    print("\n[4/4] 组装Word文档...")
+    output = build_document(day1_png, day2_png, img_dict)
 
-    # 保存
-    out = os.path.join(os.path.dirname(__file__), "澳门家庭旅行攻略.docx")
-    doc.save(out)
-    print(f"\n✅ 文档已保存: {out}")
-    # 复制到共享文件夹
-    import shutil
-    shared = r"\\192.168.0.127\Shared\atm-toolbox\澳门旅行"
-    os.makedirs(shared, exist_ok=True)
-    dest = os.path.join(shared, "澳门家庭旅行攻略.docx")
-    shutil.copy2(out, dest)
-    print(f"   共享: {dest}")
+    print(f"\n{'='*60}")
+    print(f"DONE! Output: {output}")
+    print(f"{'='*60}")
 
 if __name__ == "__main__":
     main()
