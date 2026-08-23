@@ -21,12 +21,6 @@ body { margin:0; padding:0; background:#1a1a2e; font-family:'Segoe UI','PingFang
 .legend-section { font-weight:600; font-size:11px; color:#666; margin-top:8px; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px; }
 .legend-item { display:flex; align-items:center; margin:3px 0; }
 .legend-dot { width:14px; height:14px; border-radius:50%; margin-right:8px; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,0.2); flex-shrink:0; }
-.legend-line { width:24px; height:3px; margin-right:8px; border-radius:2px; flex-shrink:0; }
-.spot-label {
-    background:rgba(16,185,129,0.9); color:#fff; border:none; border-radius:6px;
-    padding:2px 7px; font-size:11px; font-weight:600; white-space:nowrap;
-    box-shadow:0 2px 6px rgba(0,0,0,0.3);
-}
 .leaflet-tooltip.num-label {
     background:transparent; color:#fff; border:none; font-size:13px; font-weight:bold;
     text-shadow:1px 1px 4px rgba(0,0,0,0.9); padding:0;
@@ -80,32 +74,30 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     attribution:'© OpenStreetMap',maxZoom:19
 }).addTo(map);
 
-/* Day 1 stops */
+/* Real OSM coordinates */
 var day1 = [
-    {lat:22.1436,lon:113.5578,color:'#6C5CE7',name:'威尼斯人',time:'09:50'},
-    {lat:22.1895,lon:113.5320,color:'#E17055',name:'妈阁庙',time:'10:20'},
-    {lat:22.1793,lon:113.5431,color:'#00B894',name:'澳门旅游塔',time:'11:30'},
-    {lat:22.1888,lon:113.5425,color:'#0984E3',name:'南湾湖',time:'14:15'},
-    {lat:22.1975,lon:113.5438,color:'#E17055',name:'议事亭前地',time:'15:00'},
-    {lat:22.1995,lon:113.5434,color:'#E17055',name:'玫瑰圣母堂',time:'15:40'},
-    {lat:22.1987,lon:113.5405,color:'#E17055',name:'大三巴牌坊',time:'16:20'},
-    {lat:22.1985,lon:113.5438,color:'#E17055',name:'大炮台',time:'17:00'},
-    {lat:22.1478,lon:113.5606,color:'#6C5CE7',name:'威尼斯人·夜游',time:'20:30'}
+    {lat:22.14820,lon:113.56047,color:'#6C5CE7',name:'威尼斯人',time:'09:50'},
+    {lat:22.18611,lon:113.53127,color:'#E17055',name:'妈阁庙',time:'10:20'},
+    {lat:22.17980,lon:113.53680,color:'#00B894',name:'澳门旅游塔',time:'11:30'},
+    {lat:22.18634,lon:113.54208,color:'#0984E3',name:'南湾湖',time:'14:15'},
+    {lat:22.19383,lon:113.53999,color:'#E17055',name:'议事亭前地',time:'15:00'},
+    {lat:22.19484,lon:113.54036,color:'#E17055',name:'玫瑰圣母堂',time:'15:40'},
+    {lat:22.19752,lon:113.54126,color:'#E17055',name:'大三巴牌坊',time:'16:20'},
+    {lat:22.19696,lon:113.54306,color:'#E17055',name:'大炮台',time:'17:00'},
+    {lat:22.14820,lon:113.56047,color:'#6C5CE7',name:'威尼斯人·夜游',time:'20:30'}
 ];
 
-/* Day 2 stops */
 var day2 = [
-    {lat:22.1436,lon:113.5578,color:'#6C5CE7',name:'威尼斯人',time:'10:15'},
-    {lat:22.1546,lon:113.5616,color:'#E17055',name:'嘉模圣母堂',time:'11:30'},
-    {lat:22.1535,lon:113.5626,color:'#00B894',name:'龙环葡韵',time:'12:00'},
-    {lat:22.1485,lon:113.5650,color:'#6C5CE7',name:'永利皇宫',time:'16:00'},
-    {lat:22.1483,lon:113.5568,color:'#FDCB6E',name:'银河',time:'17:30'},
-    {lat:22.1478,lon:113.5606,color:'#E17055',name:'巴黎人',time:'19:00'},
-    {lat:22.1474,lon:113.5590,color:'#0984E3',name:'伦敦人',time:'19:30'},
-    {lat:22.1436,lon:113.5578,color:'#6C5CE7',name:'威尼斯人·回',time:'21:00'}
+    {lat:22.14820,lon:113.56047,color:'#6C5CE7',name:'威尼斯人',time:'10:15'},
+    {lat:22.15350,lon:113.55878,color:'#E17055',name:'嘉模圣母堂',time:'11:30'},
+    {lat:22.15394,lon:113.55973,color:'#00B894',name:'龙环葡韵',time:'12:00'},
+    {lat:22.14810,lon:113.57140,color:'#6C5CE7',name:'永利皇宫',time:'16:00'},
+    {lat:22.14745,lon:113.55457,color:'#FDCB6E',name:'银河',time:'17:30'},
+    {lat:22.14363,lon:113.56168,color:'#E17055',name:'巴黎人',time:'19:00'},
+    {lat:22.14560,lon:113.56557,color:'#0984E3',name:'伦敦人',time:'19:30'},
+    {lat:22.14820,lon:113.56047,color:'#6C5CE7',name:'威尼斯人·回',time:'21:00'}
 ];
 
-/* Draw markers + labels */
 function drawStops(stops, prefix) {
     stops.forEach(function(s,i){
         var marker = L.circleMarker([s.lat,s.lon],{
@@ -116,7 +108,6 @@ function drawStops(stops, prefix) {
     });
 }
 
-/* Draw route lines */
 var d1coords = day1.map(function(s){return [s.lat,s.lon];});
 var d2coords = day2.map(function(s){return [s.lat,s.lon];});
 
@@ -126,7 +117,6 @@ L.polyline(d2coords,{color:'#f59e0b',weight:4,opacity:0.85,dashArray:'12,8',dash
 drawStops(day1,'Day 1');
 drawStops(day2,'Day 2');
 
-/* Fit all markers */
 var allCoords = d1coords.concat(d2coords);
 map.fitBounds(allCoords,{padding:[60,60]});
 </script>
