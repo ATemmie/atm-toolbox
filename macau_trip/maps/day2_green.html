@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>Day 2 · 氹仔 + 路氹</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+body{margin:0;padding:0;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
+#map{width:1100px;height:700px}
+.bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(245,158,11,0.93);color:#fff;padding:10px 24px;border-radius:20px;font-size:16px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,0.3)}
+.legend{position:absolute;bottom:16px;right:16px;z-index:1000;background:rgba(255,255,255,0.96);padding:12px 16px;border-radius:10px;font-size:12px;box-shadow:0 3px 12px rgba(0,0,0,0.2)}
+.legend-item{display:flex;align-items:center;margin:3px 0}
+.dot{width:12px;height:12px;border-radius:50%;margin-right:7px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);flex-shrink:0}
+.leaflet-tooltip.nl{background:transparent;color:#fff;border:none;font-size:13px;font-weight:bold;text-shadow:1px 1px 4px rgba(0,0,0,0.9);padding:0}
+</style></head>
+<body>
+<div class="bar">🗓️ Day 2 · 8月25日 · 氹仔 + 路氹</div>
+<div id="map"></div>
+<div class="legend">
+<div class="legend-item"><div class="dot" style="background:#6C5CE7"></div>威尼斯人 (出发) 10:15</div>
+<div class="legend-item"><div class="dot" style="background:#E17055"></div>嘉模圣母堂 11:30</div>
+<div class="legend-item"><div class="dot" style="background:#00B894"></div>龙环葡韵 12:00</div>
+<div class="legend-item"><div class="dot" style="background:#6C5CE7"></div>永利皇宫 16:00</div>
+<div class="legend-item"><div class="dot" style="background:#FDCB6E"></div>银河 17:30</div>
+<div class="legend-item"><div class="dot" style="background:#E17055"></div>巴黎人 19:00</div>
+<div class="legend-item"><div class="dot" style="background:#0984E3"></div>伦敦人 19:30</div>
+<div class="legend-item"><div class="dot" style="background:#6C5CE7"></div>威尼斯人 (回) 21:00</div>
+</div>
+<script>
+var map=L.map('map',{zoomControl:true}).setView([22.150,113.562],15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:19}).addTo(map);
+var stops=[
+{lat:22.14820,lon:113.56047,c:'#6C5CE7',n:'威尼斯人',t:'10:15'},
+{lat:22.15350,lon:113.55878,c:'#E17055',n:'嘉模圣母堂',t:'11:30'},
+{lat:22.15394,lon:113.55973,c:'#00B894',n:'龙环葡韵',t:'12:00'},
+{lat:22.14810,lon:113.57140,c:'#6C5CE7',n:'永利皇宫',t:'16:00'},
+{lat:22.14745,lon:113.55457,c:'#FDCB6E',n:'银河',t:'17:30'},
+{lat:22.14363,lon:113.56168,c:'#E17055',n:'巴黎人',t:'19:00'},
+{lat:22.14560,lon:113.56557,c:'#0984E3',n:'伦敦人',t:'19:30'},
+{lat:22.14820,lon:113.56047,c:'#6C5CE7',n:'威尼斯人·回',t:'21:00'}
+];
+var coords=[];
+stops.forEach(function(s,i){
+L.circleMarker([s.lat,s.lon],{radius:13,fillColor:s.c,color:'#fff',weight:2.5,fillOpacity:0.92}).addTo(map)
+.bindTooltip(String(i+1),{permanent:true,direction:'center',className:'nl'})
+.bindPopup('<b>'+(i+1)+'. '+s.n+'</b><br>⏰ '+s.t);
+coords.push([s.lat,s.lon]);
+});
+L.polyline(coords,{color:'#f59e0b',weight:4,opacity:0.85,dashArray:'12,8'}).addTo(map);
+map.fitBounds(coords,{padding:[60,60]});
+</script></body></html>
