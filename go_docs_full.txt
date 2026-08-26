@@ -95,7 +95,7 @@ OpenCode Go 的工作方式与 OpenCode 中的其他提供商一样。
 
 当前支持的模型列表包括：
 
-Grok 4.5
+Grok 4.6
 GLM-5.3
 GLM-5.2
 GLM-5.1
@@ -134,7 +134,7 @@ OpenCode Go 包含以下限制：
 下表提供了基于典型 Go 使用模式的预估请求数：
 
 MODEL	每 5 小时请求数	每周请求数	每月请求数
-Grok 4.5	120	300	600
+Grok 4.6	169	423	845
 GPT 5.6 Luna	2,050	5,100	10,250
 GLM-5.3	220	540	1,080
 GLM-5.2	880	2,150	4,300
@@ -160,7 +160,7 @@ Ox Alpha Free	-	-	-
 
 预估值基于观察到的请求模式：
 
-Grok 4.5 — 每次请求 1,100 个输入 token，71,500 个缓存 token，220 个输出 token
+Grok 4.6 — 每次请求 390 个输入 token，32,500 个缓存 token，120 个输出 token
 GLM-5.3/5.2/5.1 — 每次请求 700 个输入 token，52,000 个缓存 token，150 个输出 token
 GPT 5.6 Luna — 每次请求 1,000 个输入 token，50,000 个缓存 token，220 个输出 token
 Kimi K3 — 每次请求 1,050 个输入 token，76,500 个缓存 token，300 个输出 token
@@ -183,7 +183,8 @@ Hy3 — 每次请求 830 个输入 token，71,500 个缓存 token，295 个输�
 预估值还基于以下每 1M tokens 的价格以及每个模型包含的每月使用额度：
 
 模型	输入	输出	缓存读取	缓存写入	使用额度
-Grok 4.5	$2.00	$6.00	$0.30	-	$15
+Grok 4.6 (≤ 200K tokens)	$2.00	$6.00	$0.50	-	$15
+Grok 4.6 (> 200K tokens)	$4.00	$12.00	$1.00	-	$15
 GPT 5.6 Luna (≤ 272K tokens)	$0.20	$1.20	$0.02	$0.25	$15
 GPT 5.6 Luna (> 272K tokens)	$0.40	$1.80	$0.04	$0.50	$15
 GLM-5.3	$1.40	$4.40	$0.26	-	$15
@@ -247,7 +248,7 @@ API 端点
 你也可以通过以下 API 端点访问 Go 模型。
 
 模型	模型 ID	端点	AI SDK 包
-Grok 4.5	grok-4.5	https://opencode.ai/zen/go/v1/responses	@ai-sdk/openai
+Grok 4.6	grok-4.6	https://opencode.ai/zen/go/v1/responses	@ai-sdk/openai
 GPT 5.6 Luna	gpt-5.6-luna	https://opencode.ai/zen/go/v1/responses	@ai-sdk/openai
 GLM-5.3	glm-5.3	https://opencode.ai/zen/go/v1/chat/completions	@ai-sdk/openai-compatible
 GLM-5.2	glm-5.2	https://opencode.ai/zen/go/v1/chat/completions	@ai-sdk/openai-compatible
@@ -281,7 +282,7 @@ Ox Alpha Free	ox-alpha-free	https://opencode.ai/zen/go/v1/chat/completions	@ai-s
 https://opencode.ai/zen/go/v1/models
 隐私保护
 模型	模型训练	数据留存
-Grok 4.5	不使用	30 天
+Grok 4.6	不使用	30 天
 GPT 5.6 Luna	不使用	30 天
 GLM-5.3	不使用	0 天
 GLM-5.2	不使用	0 天
@@ -304,7 +305,7 @@ DeepSeek V4 Flash	不使用	0 天
 DeepSeek V4 Flash Vision Exp	不使用	0 天
 Hy3	不使用	0 天
 Ox Alpha Free	不使用	0 天
-Grok 4.5: ZDR 会禁用依赖所存储数据的重要 API 功能，包括有状态的 Responses API、Files and Collections 和 Batch API。了解更多。
+Grok 4.6: ZDR 会禁用依赖所存储数据的重要 API 功能，包括有状态的 Responses API、Files and Collections 和 Batch API。了解更多。
 GPT 5.6 Luna: 所有 API 功能的使用都会生成滥用监控日志，并最多保留 30 天。了解更多。
 Muse Spark 1.2 Contributor: 以允许使用你的提示词和补全结果训练未来的 Meta 模型为交换，token 价格可获得大幅折扣。仅在 Meta 的地理使用政策允许的地区提供。了解更多。
 DeepSeek V4 Flash: ZDR 协议每月续签。当前协议有效期至 2026 年 8 月 31 日。
@@ -341,4 +342,4 @@ Türkçe
 
 © Anomaly
 
-最近更新： 2026年8月24日
+最近更新： 2026年8月25日
