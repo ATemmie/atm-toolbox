@@ -1,6 +1,6 @@
 {
   "source": "https://opencode.ai/docs/zh-cn/go/",
-  "fetched_at": "2026-08-21",
+  "fetched_at": "2026-08-27",
   "plan": {
     "name": "OpenCode Go",
     "price_first_month_usd": 5,
@@ -15,25 +15,32 @@
   },
   "models": [
     {
-      "name": "Grok 4.5",
+      "name": "Grok 4.6",
       "requests": {
-        "per_5h": 120,
-        "per_week": 300,
-        "per_month": 600
+        "per_5h": 169,
+        "per_week": 423,
+        "per_month": 845
       },
       "pricing": {
         "tiers": {
-          "默认": {
+          "≤ 200K tokens": {
             "input": 2.0,
             "output": 6.0,
-            "cache_read": 0.3,
+            "cache_read": 0.5,
+            "cache_write": null,
+            "quota": 15.0
+          },
+          "> 200K tokens": {
+            "input": 4.0,
+            "output": 12.0,
+            "cache_read": 1.0,
             "cache_write": null,
             "quota": 15.0
           }
         }
       },
       "endpoint": {
-        "model_id": "grok-4.5",
+        "model_id": "grok-4.6",
         "endpoint": "https://opencode.ai/zen/go/v1/responses"
       },
       "privacy": {
@@ -73,6 +80,33 @@
       "privacy": {
         "training": "不使用",
         "retention": "30 天"
+      }
+    },
+    {
+      "name": "GLM-5.3-Flash",
+      "requests": {
+        "per_5h": 1580,
+        "per_week": 3950,
+        "per_month": 7900
+      },
+      "pricing": {
+        "tiers": {
+          "默认": {
+            "input": 0.15,
+            "output": 0.5,
+            "cache_read": 0.03,
+            "cache_write": null,
+            "quota": 15.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "glm-5.3-flash",
+        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
+      },
+      "privacy": {
+        "training": "不使用",
+        "retention": "0 天"
       }
     },
     {
@@ -230,6 +264,33 @@
       },
       "endpoint": {
         "model_id": "kimi-k2.6",
+        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
+      },
+      "privacy": {
+        "training": "不使用",
+        "retention": "0 天"
+      }
+    },
+    {
+      "name": "LongCat-2.0",
+      "requests": {
+        "per_5h": 11400,
+        "per_week": 28600,
+        "per_month": 57200
+      },
+      "pricing": {
+        "tiers": {
+          "默认": {
+            "input": 0.3,
+            "output": 1.2,
+            "cache_read": 0.006,
+            "cache_write": null,
+            "quota": 60.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "longcat-2.0",
         "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
       },
       "privacy": {
@@ -555,6 +616,40 @@
       },
       "endpoint": {
         "model_id": "deepseek-v4-flash",
+        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
+      },
+      "privacy": {
+        "training": "不使用",
+        "retention": "0 天"
+      }
+    },
+    {
+      "name": "DeepSeek V4 Flash Vision Exp",
+      "requests": {
+        "per_5h": 3800,
+        "per_week": 9450,
+        "per_month": 18900
+      },
+      "pricing": {
+        "tiers": {
+          "Off-Peak": {
+            "input": 0.22,
+            "output": 0.66,
+            "cache_read": 0.007,
+            "cache_write": null,
+            "quota": 15.0
+          },
+          "Peak": {
+            "input": 0.44,
+            "output": 1.32,
+            "cache_read": 0.014,
+            "cache_write": null,
+            "quota": 15.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "deepseek-v4-flash-vision-exp",
         "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
       },
       "privacy": {
