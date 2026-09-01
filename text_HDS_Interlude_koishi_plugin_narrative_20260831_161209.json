@@ -1,0 +1,27 @@
+[
+  {
+    "title": "GitHub - koishijs/plugins: Official Plugins for Koishi",
+    "href": "https://github.com/koishijs/plugins",
+    "body": "这个仓库包含了一些用于 Koishi 的小插件。"
+  },
+  {
+    "title": "GitHub - koishijs/koishi-plugin-dialogue: Dialogue System for Koishi",
+    "href": "https://github.com/koishijs/koishi-plugin-dialogue",
+    "body": "Dialogue System for Koishi. Contribute to koishijs/koishi-plugin-dialogue development by creating an account on GitHub."
+  },
+  {
+    "title": "Pull requests · koishijs/koishi-plugin-dialogue",
+    "href": "https://github.com/koishijs/koishi-plugin-dialogue/pulls",
+    "body": "Dialogue System for Koishi. Contribute to koishijs/koishi-plugin-dialogue development by creating an account on GitHub."
+  },
+  {
+    "title": "官方插件 | Koishi",
+    "href": "https://koishi.js.org/v3/plugins/",
+    "body": "Koishi 官方提供了许多插件。为了更好地模块化开发，它们被分散在了多个仓库中。"
+  },
+  {
+    "title": "GitHub - koishijs/koishi-plugin-github: GitHub Toolkit for Koishi · GitHub",
+    "href": "https://github.com/koishijs/koishi-plugin-github",
+    "body": "GitHub Toolkit for Koishi. Contribute to koishijs/koishi-plugin-github development by creating an account on GitHub."
+  }
+]
