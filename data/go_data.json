@@ -1,6 +1,6 @@
 {
   "source": "https://opencode.ai/docs/zh-cn/go/",
-  "fetched_at": "2026-09-01",
+  "fetched_at": "2026-09-02",
   "plan": {
     "name": "OpenCode Go",
     "price_first_month_usd": 5,
@@ -490,9 +490,9 @@
     {
       "name": "Qwen3.7 Max",
       "requests": {
-        "per_5h": 340,
-        "per_week": 840,
-        "per_month": 1690
+        "per_5h": 170,
+        "per_week": 420,
+        "per_month": 840
       },
       "pricing": {
         "tiers": {
@@ -501,7 +501,7 @@
             "output": 7.5,
             "cache_read": 0.5,
             "cache_write": 3.125,
-            "quota": 60.0
+            "quota": 30.0
           }
         }
       },
