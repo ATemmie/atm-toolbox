@@ -1,6 +1,6 @@
 {
   "source": "https://opencode.ai/docs/zh-cn/go/",
-  "fetched_at": "2026-09-04",
+  "fetched_at": "2026-09-05",
   "plan": {
     "name": "OpenCode Go",
     "price_first_month_usd": 5,
@@ -758,6 +758,33 @@
       },
       "endpoint": {
         "model_id": "hy3",
+        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
+      },
+      "privacy": {
+        "training": "不使用",
+        "retention": "0 天"
+      }
+    },
+    {
+      "name": "Omen Alpha",
+      "requests": {
+        "per_5h": 11600,
+        "per_week": 29000,
+        "per_month": 57900
+      },
+      "pricing": {
+        "tiers": {
+          "默认": {
+            "input": 0.2,
+            "output": 0.66,
+            "cache_read": 0.04,
+            "cache_write": null,
+            "quota": 100.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "omen-alpha",
         "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
       },
       "privacy": {
