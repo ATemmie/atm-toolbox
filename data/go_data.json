@@ -1,6 +1,6 @@
 {
   "source": "https://opencode.ai/docs/zh-cn/go/",
-  "fetched_at": "2026-09-10",
+  "fetched_at": "2026-09-11",
   "plan": {
     "name": "OpenCode Go",
     "price_first_month_usd": 5,
@@ -14,33 +14,6 @@
     "exceed_policy": "可在控制台启用\"使用余额\"，超出后回退到 Zen 余额；否则可继续使用免费模型。"
   },
   "models": [
-    {
-      "name": "Omen Alpha",
-      "requests": {
-        "per_5h": 11600,
-        "per_week": 29000,
-        "per_month": 57900
-      },
-      "pricing": {
-        "tiers": {
-          "默认": {
-            "input": 0.2,
-            "output": 0.66,
-            "cache_read": 0.04,
-            "cache_write": null,
-            "quota": 100.0
-          }
-        }
-      },
-      "endpoint": {
-        "model_id": "omen-alpha",
-        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
-      },
-      "privacy": {
-        "training": "不使用",
-        "retention": "0 天"
-      }
-    },
     {
       "name": "GLM-5.3-Flash",
       "requests": {
@@ -569,6 +542,40 @@
       }
     },
     {
+      "name": "DeepSeek V4.1 Flash",
+      "requests": {
+        "per_5h": 6500,
+        "per_week": 16250,
+        "per_month": 32500
+      },
+      "pricing": {
+        "tiers": {
+          "Off-Peak": {
+            "input": 0.15,
+            "output": 0.6,
+            "cache_read": 0.003,
+            "cache_write": null,
+            "quota": 15.0
+          },
+          "Peak": {
+            "input": 0.3,
+            "output": 1.2,
+            "cache_read": 0.006,
+            "cache_write": null,
+            "quota": 15.0
+          }
+        }
+      },
+      "endpoint": {
+        "model_id": "deepseek-v4.1-flash",
+        "endpoint": "https://opencode.ai/zen/go/v1/chat/completions"
+      },
+      "privacy": {
+        "training": "不使用",
+        "retention": "0 天"
+      }
+    },
+    {
       "name": "DeepSeek V4 Pro",
       "requests": {
         "per_5h": 1050,
@@ -605,23 +612,23 @@
     {
       "name": "DeepSeek V4 Flash",
       "requests": {
-        "per_5h": 7600,
-        "per_week": 18900,
-        "per_month": 37800
+        "per_5h": 13000,
+        "per_week": 32500,
+        "per_month": 65000
       },
       "pricing": {
         "tiers": {
           "Off-Peak": {
-            "input": 0.22,
-            "output": 0.66,
-            "cache_read": 0.007,
+            "input": 0.15,
+            "output": 0.6,
+            "cache_read": 0.003,
             "cache_write": null,
             "quota": 30.0
           },
           "Peak": {
-            "input": 0.44,
-            "output": 1.32,
-            "cache_read": 0.014,
+            "input": 0.3,
+            "output": 1.2,
+            "cache_read": 0.006,
             "cache_write": null,
             "quota": 30.0
           }
@@ -639,23 +646,23 @@
     {
       "name": "DeepSeek V4 Flash Vision Exp",
       "requests": {
-        "per_5h": 3800,
-        "per_week": 9450,
-        "per_month": 18900
+        "per_5h": 6500,
+        "per_week": 16250,
+        "per_month": 32500
       },
       "pricing": {
         "tiers": {
           "Off-Peak": {
-            "input": 0.22,
-            "output": 0.66,
-            "cache_read": 0.007,
+            "input": 0.15,
+            "output": 0.6,
+            "cache_read": 0.003,
             "cache_write": null,
             "quota": 15.0
           },
           "Peak": {
-            "input": 0.44,
-            "output": 1.32,
-            "cache_read": 0.014,
+            "input": 0.3,
+            "output": 1.2,
+            "cache_read": 0.006,
             "cache_write": null,
             "quota": 15.0
           }
